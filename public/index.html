@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suzuki Service Assistant</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Decorative Gradient Glows -->
+    <div class="glow-bg glow-bg-1"></div>
+    <div class="glow-bg glow-bg-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand-section">
+                <img src="assets/suzuki_logo_dealer.png" alt="Suzuki Buana Indomobil Trada Logo" class="brand-logo-img">
+                <div class="brand-text">
+                    <span class="brand-title">SUZUKI</span>
+                    <span class="brand-subtitle">Buana Indomobil Trada</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle-btn" class="icon-btn" aria-label="Toggle Theme">
+                    <!-- Sun Icon -->
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    <!-- Moon Icon -->
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                </button>
+                <button id="settings-btn" class="icon-btn sro-only" aria-label="Settings" title="Pengaturan Webhook & Kredensial">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+                <button id="logout-btn" class="icon-btn sro-only" aria-label="Logout" title="Logout SRO Mode">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Banner -->
+        <section class="hero-banner">
+            <div class="hero-content">
+                <h1>Suzuki Service Assistant</h1>
+                <p>Cek batas aman jadwal servis berkala kendaraan Suzuki Anda secara real-time dan akurat.</p>
+            </div>
+            <div class="hero-image-wrapper">
+                <img id="banner-img" src="assets/suzuki_banner.png" alt="Suzuki Service Banner" class="hero-img">
+            </div>
+        </section>
+
+        <!-- Main Content Split Grid -->
+        <main class="main-content">
+            <!-- Left Side: Input Form Card -->
+            <section class="panel-card form-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">📋</span>
+                    <h2>Data Kendaraan & Pelanggan</h2>
+                </div>
+                
+                <form id="service-form" class="service-form" novalidate>
+                    <div class="form-grid-2">
+                        <div class="input-group">
+                            <label for="nama_pelanggan">Nama Lengkap Pelanggan <span class="required">*</span></label>
+                            <input type="text" id="nama_pelanggan" name="nama_pelanggan" placeholder="Contoh: Ahmad Fauzi" required>
+                            <span class="error-msg">Nama wajib diisi</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="nopol">Nomor Polisi Mobil <span class="required">*</span></label>
+                            <input type="text" id="nopol" name="nopol" placeholder="Contoh: B 1234 ABC" style="text-transform: uppercase;" required>
+                            <span class="error-msg">Nomor Polisi wajib diisi</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="input-group">
+                            <label for="no_hp">Nomor WhatsApp Aktif <span class="required">*</span></label>
+                            <div class="phone-input-wrapper">
+                                <span class="phone-prefix">+62</span>
+                                <input type="tel" id="no_hp" name="no_hp" placeholder="812xxxxxxxx" required>
+                            </div>
+                            <span class="error-msg">Nomor WhatsApp wajib diisi</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="tipe_mobil">Tipe Mobil Suzuki <span class="required">*</span></label>
+                            <select id="tipe_mobil" name="tipe_mobil" required>
+                                <!-- JavaScript will load the Suzuki car list here -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="divider">
+
+                    <div class="form-grid-2">
+                        <div class="input-group">
+                            <label for="odometer">Odometer Saat Ini (KM)</label>
+                            <div class="number-input-wrapper">
+                                <button type="button" class="num-step-btn minus" id="odometer-minus">−</button>
+                                <input type="number" id="odometer" name="odometer" min="0" value="8500" step="500">
+                                <button type="button" class="num-step-btn plus" id="odometer-plus">+</button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="bulan">Usia Mobil (Bulan dari Pembelian)</label>
+                            <div class="number-input-wrapper">
+                                <button type="button" class="num-step-btn minus" id="bulan-minus">−</button>
+                                <input type="number" id="bulan" name="bulan" min="0" value="5" step="1">
+                                <button type="button" class="num-step-btn plus" id="bulan-plus">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Kondisi Rute Berkendara Sehari-hari</label>
+                        <div class="radio-options">
+                            <label class="radio-card">
+                                <input type="radio" name="kondisi_jalan" value="Normal" checked>
+                                <div class="radio-content">
+                                    <div class="radio-circle"></div>
+                                    <div class="radio-text">
+                                        <strong>Normal & Lancar</strong>
+                                        <span>Tol, luar kota, jarang macet, muatan ringan</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="kondisi_jalan" value="Padat">
+                                <div class="radio-content">
+                                    <div class="radio-circle"></div>
+                                    <div class="radio-text">
+                                        <strong>Padat & Berat</strong>
+                                        <span>Sering macet total, stop-and-go, berdebu, muatan penuh</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        <span class="btn-spinner" id="btn-spinner"></span>
+                        <span class="btn-text">🔍 Periksa Jadwal Service</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Right Side: Animated Dashboard Results Card -->
+            <section class="panel-card results-panel empty-state" id="results-panel">
+                <!-- Empty State View -->
+                <div class="results-empty" id="results-empty-view">
+                    <div class="empty-icon-pulse">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="analysis-icon">
+                            <line x1="18" y1="20" x2="18" y2="10"/>
+                            <line x1="12" y1="20" x2="12" y2="4"/>
+                            <line x1="6" y1="20" x2="6" y2="14"/>
+                        </svg>
+                    </div>
+                    <h3>Hasil Analisis Belum Tersedia</h3>
+                    <p>Silakan isi data kendaraan Anda di sebelah kiri lalu klik tombol <strong>Periksa Jadwal Service</strong> untuk melihat analisis batas aman dan rekomendasi perawatan.</p>
+                </div>
+
+                <!-- Active Analysis Results (Hidden initially) -->
+                <div class="results-content hidden" id="results-content-view">
+                    <div class="results-header">
+                        <div>
+                            <h2 id="res-car-title">Suzuki All New Ertiga Hybrid</h2>
+                            <p class="res-meta-info">Pemilik: <span id="res-cust-name" class="highlight-text">-</span> | No. Polisi: <span id="res-nopol" class="highlight-text">-</span></p>
+                        </div>
+                        <div class="badge-km" id="target-header-badge">Target: 10,000 KM</div>
+                    </div>
+
+                    <!-- Visual Progress Gauges -->
+                    <div class="visual-gauges">
+                        <div class="gauge-card" id="gauge-km-card">
+                            <div class="gauge-header">
+                                <span class="gauge-icon">📍</span>
+                                <h4>Sisa Jarak Tempuh</h4>
+                            </div>
+                            <div class="gauge-value" id="gauge-km-value">- KM</div>
+                            <div class="gauge-status" id="gauge-km-status">Aman</div>
+                        </div>
+
+                        <div class="gauge-card" id="gauge-time-card">
+                            <div class="gauge-header">
+                                <span class="gauge-icon">📅</span>
+                                <h4>Sisa Batas Waktu</h4>
+                            </div>
+                            <div class="gauge-value" id="gauge-time-value">- Bulan</div>
+                            <div class="gauge-status" id="gauge-time-status">Aman</div>
+                        </div>
+                    </div>
+
+                    <!-- Target Card Info -->
+                    <div class="info-alert-card" id="target-summary-card">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                        <div>
+                            <strong>Target Servis Berikutnya:</strong>
+                            <p id="target-summary-text">Servis berkala pada kilometer 10.000 atau bulan ke-6 (mana yang tercapai lebih dulu).</p>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Details Tabs or Cards -->
+                    <div class="details-section">
+                        <div class="detail-block">
+                            <h3 class="detail-title cost-status-title">💰 Status Biaya & Benefit Anda</h3>
+                            <div class="detail-card warning-accent" id="res-cost-benefit-card">
+                                <h4 id="res-cost-status-badge">🟡 GRATIS BIAYA JASA SAJA</h4>
+                                <p id="res-coverage-text">-</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-block">
+                            <h3 class="detail-title recommendation-title">💡 Rekomendasi Perawatan</h3>
+                            <div class="detail-card success-accent" id="res-recommendation-card">
+                                <p id="res-tips-text">-</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-block sro-only-block sro-only">
+                            <h3 class="detail-title sro-title">👤 Rekomendasi Internal SRO (Service Officer)</h3>
+                            <div class="detail-card sro-accent" id="res-sro-card">
+                                <p id="res-sro-text">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="action-buttons">
+                        <button id="whatsapp-share-btn" class="action-btn wa-btn sro-only">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                                <path d="M17.472 14.382c-.022-.015-.044-.029-.066-.044l-.001.001c-.13-.086-.264-.176-.4-.268-.383-.26-.811-.55-1.127-.723-.191-.103-.385-.157-.577-.157-.272 0-.528.11-.749.317l-.234.218-.088-.046c-.347-.183-.699-.403-1.047-.655-.401-.29-.785-.63-1.144-.99-.356-.356-.694-.737-.982-1.134-.251-.347-.47-.696-.653-1.042l-.046-.089.219-.234c.206-.222.316-.478.316-.749 0-.192-.054-.385-.158-.577-.173-.316-.462-.743-.723-1.127-.092-.136-.182-.27-.268-.4-.015-.022-.029-.044-.044-.066-.189-.281-.39-.582-.577-.665-.179-.08-.385-.098-.59-.052-.403.092-.816.326-1.196.678-.501.464-.816 1.018-.936 1.649-.12.631.026 1.346.435 2.128.431.826 1.043 1.688 1.819 2.564.776.877 1.666 1.637 2.651 2.261.802.508 1.611.884 2.404 1.117.794.233 1.503.267 2.115.101.613-.166 1.126-.547 1.485-1.1.352-.544.475-1.164.364-1.84-.043-.263-.16-.497-.336-.669-.176-.172-.477-.373-.758-.561zm3.83-8.87C19.02 3.22 15.93 1.84 12.18 1.84 5.97 1.84.9 6.91.9 13.12c0 2.27.67 4.41 1.85 6.22l-1.95 6.84 7.08-1.85c1.73.95 3.7 1.48 5.75 1.48 6.2 0 11.27-5.07 11.27-11.28 0-3-.14-5.83-3.6-8.02zm-3.6 15.54c-1.57.85-3.32 1.3-5.12 1.3-1.84 0-3.64-.46-5.22-1.34l-.38-.22-3.87 1.01 1.03-3.63-.24-.39c-.96-1.55-1.47-3.34-1.47-5.21 0-5.32 4.33-9.65 9.65-9.65 2.58 0 5 .99 6.82 2.82 1.82 1.82 2.82 4.24 2.82 6.83 0 5.32-4.33 9.65-9.65 9.65z"/>
+                            </svg>
+                            Kirim Ke WhatsApp
+                        </button>
+                        <button id="print-btn" class="action-btn print-btn">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                <polyline points="6 9 6 2 18 2 18 9"/>
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                                <rect x="6" y="14" width="12" height="8"/>
+                            </svg>
+                            Cetak Laporan
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- SRO History Log Panel (SRO-only) -->
+        <section class="panel-card sro-history-panel sro-only" id="history-panel" style="margin-top: 1rem; width: 100%;">
+            <div class="history-table-wrapper">
+                <table class="history-table">
+                    <caption class="table-caption">
+                        <div class="caption-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                            <span>📜 Log Submission Servis Kendaraan (Internal SRO)</span>
+                            <button id="download-csv-btn" class="history-action-btn" style="font-size: 0.85rem; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="vertical-align: middle;">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                                </svg>
+                                Download CSV
+                            </button>
+                        </div>
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th>Tanggal & Waktu</th>
+                            <th>Pelanggan</th>
+                            <th>No. Polisi</th>
+                            <th>WhatsApp</th>
+                            <th>Tipe Mobil</th>
+                            <th>Odometer</th>
+                            <th>Target Terdekat</th>
+                            <th>Status Biaya</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <tr>
+                            <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading log history...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Settings Overlay Drawer -->
+    <div id="settings-drawer" class="drawer-overlay">
+        <div class="drawer-content">
+            <div class="drawer-header">
+                <h3>⚙️ Pengaturan Portal</h3>
+                <button id="close-settings-btn" class="close-btn">&times;</button>
+            </div>
+            <div class="drawer-body">
+                <div class="input-group">
+                    <label for="webhook-url-input">N8N Webhook URL</label>
+                    <input type="url" id="webhook-url-input" placeholder="https://primary-webhook-url.com">
+                    <p class="help-text">URL Webhook yang akan menerima kiriman data lead dari form.</p>
+                </div>
+                <hr class="divider">
+                <h4 style="color: var(--text-title); font-size: 0.9rem; font-weight: 700; margin-top: 0.5rem;">Ganti Kredensial Admin SRO</h4>
+                <div class="input-group">
+                    <label for="settings-username-input">Username Admin</label>
+                    <input type="text" id="settings-username-input" placeholder="admin">
+                </div>
+                <div class="input-group">
+                    <label for="settings-password-input">Password Baru SRO</label>
+                    <input type="password" id="settings-password-input" placeholder="••••••••" style="width: 100%; padding: 0.85rem 1rem; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-color); color: var(--text-title); border-radius: var(--border-radius-sm); font-family: var(--font-primary); font-size: 0.95rem; outline: none; transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);">
+                </div>
+                <button id="save-settings-btn" class="save-settings-btn">Simpan Pengaturan</button>
+                
+                <div class="toast" id="settings-toast">Pengaturan berhasil disimpan!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Overlay Drawer / Modal -->
+    <div id="login-modal" class="drawer-overlay">
+        <div class="drawer-content login-content" style="max-width: 400px; margin: auto; height: max-content; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); transform: scale(0.9); opacity: 0; transition: transform var(--transition-normal), opacity var(--transition-normal); padding: 2.5rem;">
+            <div class="drawer-header">
+                <h3>👤 Login Administrator SRO</h3>
+                <button id="close-login-btn" class="close-btn">&times;</button>
+            </div>
+            <form id="login-form" class="drawer-body" style="padding-top: 1rem;">
+                <div id="login-error-msg" class="error-msg" style="display: none; background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 0.75rem; border-radius: var(--border-radius-sm); font-size: 0.85rem; font-weight: 600; text-align: center; border: 1px solid rgba(239, 68, 68, 0.25); margin-bottom: 1rem;">
+                    Username atau password salah!
+                </div>
+                <div class="input-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required placeholder="Contoh: admin">
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" style="width: 100%; padding: 0.85rem 1rem; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-color); color: var(--text-title); border-radius: var(--border-radius-sm); font-family: var(--font-primary); font-size: 0.95rem; outline: none; transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);">
+                </div>
+                <button type="submit" class="save-settings-btn" style="margin-top: 0.5rem; width: 100%;">Masuk</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
