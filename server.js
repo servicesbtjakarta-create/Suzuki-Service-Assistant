@@ -111,7 +111,30 @@ app.get('/api/service-checks', (req, res) => {
 
 // 3b. Export History Logs as CSV
 app.get('/api/service-checks/csv', (req, res) => {
-    const checks = readJsonFile(DB_PATH);
+    // 1. Ubah const menjadi let agar datanya bisa difilter
+    let checks = readJsonFile(DB_PATH);
+    
+    // 2. TAMBAHKAN LOGIKA FILTER RENTANG TANGGAL DI SINI
+    const { startDate, endDate } = req.query;
+    if (startDate || endDate) {
+        checks = checks.filter(r => {
+            const recordDate = new Date(r.createdAt);
+            
+            // Cek jika tanggal record kurang dari startDate
+            if (startDate) {
+                const start = new Date(startDate + 'T00:00:00');
+                if (recordDate < start) return false;
+            }
+            
+            // Cek jika tanggal record lebih dari endDate
+            if (endDate) {
+                const end = new Date(endDate + 'T23:59:59');
+                if (recordDate > end) return false;
+            }
+            
+            return true;
+        });
+    }
     
     // Define CSV columns
     const headers = [
