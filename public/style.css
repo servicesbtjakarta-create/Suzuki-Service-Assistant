@@ -1388,3 +1388,19 @@ html[data-theme="light"] .history-table tbody tr:hover {
     transform: scale(1) !important;
     opacity: 1 !important;
 }
+/* Memperbaiki tampilan input date di Dark Mode */
+input[type="date"] {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Membalikkan warna ikon kalender menjadi putih di dark mode */
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
