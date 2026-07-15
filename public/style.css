@@ -556,6 +556,7 @@ html[data-theme="light"] .radio-card:hover .radio-content {
 
 /* Error States */
 .input-group.error input,
+.input-group.error select
 .input-group.error .phone-input-wrapper input,
 .input-group.error .phone-prefix {
     border-color: var(--color-danger);
