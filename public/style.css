@@ -1446,3 +1446,34 @@ body.role-sro #service-form select {
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
 }
+/* =========================================
+   FIX LAYOUT: Mencegah Web Bergeser / Tdk Tengah
+   ========================================= */
+
+/* 1. Mengunci layar agar tidak bocor (scroll) ke samping */
+html, body {
+    overflow-x: hidden !important;
+    width: 100%;
+}
+
+/* 2. Memaksa baris kalender CSV agar bisa melipat ke bawah di layar kecil */
+.caption-container, 
+.caption-container > div {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 10px;
+}
+
+/* 3. Menyesuaikan deretan tombol aksi (WA, Booking, Cetak) agar rapi */
+.action-buttons {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Membuat tombol menyesuaikan lebar ruang yang tersisa */
+.action-buttons > button {
+    flex: 1 1 auto;
+    min-width: 150px; /* Lebar minimal tombol */
+}
