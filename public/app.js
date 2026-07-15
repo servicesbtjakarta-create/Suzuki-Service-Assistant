@@ -500,6 +500,9 @@ function updateResultsUI(res) {
     document.getElementById("res-car-title").innerText = res.tipeMobil;
     document.getElementById("res-cust-name").innerText = res.namaPelanggan;
     document.getElementById("res-nopol").innerText = res.nopol;
+    // TAMBAHKAN BARIS INI UNTUK MENGIRIM ANGKA KE SPAN ODOMETER
+    document.getElementById("res-odometer").innerText = res.odometer.toLocaleString('id-ID'); 
+    
     document.getElementById("target-header-badge").innerText = `Target: ${res.targetKm.toLocaleString('id-ID')} KM / Bln ${res.targetBulan}`;
 
     // Target summary text card
