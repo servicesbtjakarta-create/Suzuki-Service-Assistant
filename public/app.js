@@ -167,21 +167,34 @@ function setupEventListeners() {
         window.location.href = "/";
     });
 
-  // CSV Download trigger
+ // CSV Download trigger dengan Rentang Tanggal
 const downloadCsvBtn = document.getElementById("download-csv-btn");
-downloadCsvBtn.addEventListener("click", () => {
-    // Ambil nilai tanggal dari input kalender (jika ada)
-    const filterDate = document.getElementById("filter-date-csv")?.value;
-    let url = "/api/service-checks/csv";
-    
-    // Jika SRO memilih tanggal, tambahkan ke URL sebagai query parameter
-    if (filterDate) {
-        url += `?date=${filterDate}`;
-    }
-    
-    // Arahkan ke URL untuk memicu download
-    window.location.href = url;
-});
+if (downloadCsvBtn) {
+    downloadCsvBtn.addEventListener("click", () => {
+        // Ambil nilai dari kedua input kalender
+        const startDate = document.getElementById("filter-start-date")?.value;
+        const endDate = document.getElementById("filter-end-date")?.value;
+        
+        let url = "/api/service-checks/csv";
+        let queryParams = [];
+        
+        // Jika user mengisi tanggal mulai
+        if (startDate) {
+            queryParams.push(`startDate=${startDate}`);
+        }
+        // Jika user mengisi tanggal akhir
+        if (endDate) {
+            queryParams.push(`endDate=${endDate}`);
+        }
+        
+        // Gabungkan parameter ke dalam URL (misal: ?startDate=2026-03-01&endDate=2026-03-31)
+        if (queryParams.length > 0) {
+            url += `?${queryParams.join("&")}`;
+        }
+        
+        // Arahkan ke URL untuk memicu download
+        window.location.href = url;
+    });
 
     // Login Form Submit Handling
     const loginForm = document.getElementById("login-form");
