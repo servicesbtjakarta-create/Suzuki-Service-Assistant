@@ -1405,12 +1405,8 @@ input[type="date"] {
 [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator:hover {
     opacity: 1;
 }
-/* Paksa bingkai menjadi merah untuk input teks DAN select pilihan saat error */
-.input-group.error input,
-.input-group.error select,
-.input-group.error .phone-input-wrapper {
-    border: 1px solid #ef4444 !important;
-    background-color: rgba(239, 68, 68, 0.05) !important;
-    outline: none !important;
-    box-shadow: 0 0 0 1px #ef4444 !important; /* Tambahan shadow tipis agar merahnya tegas */
+/* Memastikan bingkai kotak pilihan (select) ikut berwarna merah jika error */
+.input-group.error select {
+    border-color: #ef4444 !important; /* Warna merah */
+    background-color: rgba(239, 68, 68, 0.05); /* Sedikit latar belakang merah agar seragam */
 }
