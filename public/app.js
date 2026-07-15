@@ -85,6 +85,12 @@ function setupEventListeners() {
     document.getElementById("odometer-plus").addEventListener("click", () => stepInput("odometer", 500));
     document.getElementById("bulan-minus").addEventListener("click", () => stepInput("bulan", -1));
     document.getElementById("bulan-plus").addEventListener("click", () => stepInput("bulan", 1));
+    
+    // TAMBAHAN: Tombol plus/minus untuk Servis Terakhir
+    document.getElementById("odometer_terakhir-minus").addEventListener("click", () => stepInput("odometer_terakhir", -500));
+    document.getElementById("odometer_terakhir-plus").addEventListener("click", () => stepInput("odometer_terakhir", 500));
+    document.getElementById("bulan_terakhir-minus").addEventListener("click", () => stepInput("bulan_terakhir", -1));
+    document.getElementById("bulan_terakhir-plus").addEventListener("click", () => stepInput("bulan_terakhir", 1));
 
     // Theme Toggle
     const themeBtn = document.getElementById("theme-toggle-btn");
@@ -276,7 +282,7 @@ function setupEventListeners() {
 
 // --- CORE RAG LOGIC & CALCULATIONS ---
 function calculateServiceSchedule(data) {
-    const { odometer, bulan, tipeMobil, kondisiJalan } = data;
+    const { odometer, bulan, tipeMobil, kondisiJalan, odometerTerakhir, bulanTerakhir } = data;
     
     let targetKm = 0;
     let targetBulan = 0;
@@ -285,112 +291,83 @@ function calculateServiceSchedule(data) {
     let tipsCustomer = "";
     let rekomendasiSro = "";
 
-    // 1. Evaluasi Aturan Khusus 1.000 KM (Free Service 1)
-    if (odometer <= 1000 && bulan <= 1) {
+    // 1. Tentukan Interval Standar Berdasarkan Kondisi Jalan
+    let intervalKm = (kondisiJalan === "Normal") ? 10000 : 5000;
+    let intervalBulan = (kondisiJalan === "Normal") ? 6 : 3;
+
+    // 2. HITUNG TARGET DINAMIS (Berdasarkan Servis Terakhir)
+    if (odometerTerakhir === 0 && bulanTerakhir === 0 && odometer <= 1000) {
+        // Pengecualian jika mobil benar-benar baru dan belum servis 1.000 KM
         targetKm = 1000;
         targetBulan = 1;
-        statusBiayaCustomer = "🔴 GRATIS BIAYA JASA (Pemeriksaan 23 Bagian Kendaraan)";
-        cakupanPengerjaan = "Pemeriksaan Sesuai dengan ketentuan Buku Servis Resmi Suzuki menggunakan Kupon Free Service 1, pada periode 1.000 KM pertama ini <strong>HANYA dilakukan pemeriksaan menyeluruh (Checking Only)</strong> pada komponen vital mobil. Belum ada penggantian oli atau suku cadang.";
-        tipsCustomer = "Segera jadwalkan kunjungan ke bengkel resmi Suzuki terdekat agar garansi utama mobil Anda tetap aktif!";
-        rekomendasiSro = "Free Service 1 (Checking Only). Wajib arahkan ke bengkel resmi agar garansi aman.";
-    } 
-    // 2. Evaluasi Aturan Kelipatan 10.000 KM hingga 50.000 KM (Free Service 2 - 6)
-    else if (odometer <= 50000 && bulan <= 30) {
-        let namaKupon = ""; // Variabel baru untuk menyimpan nama kupon
-
-        if (odometer <= 10000 && bulan <= 6) {
-            targetKm = 10000;
-            targetBulan = 6;
-            namaKupon = "Kupon Free Service 2";
-        } else if (odometer <= 20000 && Math.max(0, bulan) <= 12) {
-            targetKm = 20000;
-            targetBulan = 12;
-            namaKupon = "Kupon Free Service 3";
-        } else if (odometer <= 30000 && bulan <= 18) {
-            targetKm = 30000;
-            targetBulan = 18;
-            namaKupon = "Kupon Free Service 4";
-        } else if (odometer <= 40000 && bulan <= 24) {
-            targetKm = 40000;
-            targetBulan = 24;
-            namaKupon = "Kupon Free Service 5";
-        } else {
-            targetKm = 50000;
-            targetBulan = 30;
-            namaKupon = "Kupon Free Service 6";
-        }
-
-        // Filter Keuntungan Khusus Tipe Mobil
-        if (tipeMobil.includes("New Carry Pickup")) {
-            statusBiayaCustomer = "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Filter Oli)";
-            cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong> untuk Target ${targetKm.toLocaleString('id-ID')} KM. Anda dibebaskan dari biaya Jasa Mekanik, penggantian Oli Mesin resmi, beserta Filter Oli baru.`;
-        } else if (tipeMobil.includes("All New Ertiga") || tipeMobil.includes("XL7")) {
-            statusBiayaCustomer = "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Seluruh Suku Cadang Berkala)";
-            cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong> untuk Target ${targetKm.toLocaleString('id-ID')} KM. Khusus tipe mobil Anda, Anda mendapatkan gratis biaya Jasa Mekanik, Oli Mesin, dan seluruh Suku Cadang (Part) berkala resmi sesuai ketentuan kupon.`;
-        } else {
-            statusBiayaCustomer = "🟡 GRATIS BIAYA JASA SAJA (Oli & Part Berbayar)";
-            cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong> untuk Target ${targetKm.toLocaleString('id-ID')} KM. Fasilitas yang gratis hanya Jasa Servis berkala saja. Untuk biaya Oli Mesin dan penggantian suku cadang lainnya ditanggung oleh pemilik kendaraan.`;
-        }
-
-        // Tips Interval berdasarkan kondisi jalan
-        if (kondisiJalan === "Normal") {
-            tipsCustomer = `Kondisi mobil Anda terpantau sangat baik. Silakan lakukan servis berkala secara rutin setiap kelipatan <strong>10.000 KM atau 6 Bulan sekali</strong> (mana yang tercapai lebih dulu).`;
-            rekomendasiSro = "Kondisi jalan normal. Follow-up standar per 10.000 KM / 6 Bulan.";
-        } else {
-            tipsCustomer = `⚠️ <strong>Rekomendasi Khusus</strong>: Karena mobil Anda sering melewati rute padat/macet/beban berat, oli mesin akan lebih cepat encer dan kotor. Demi menjaga performa mesin tetap awet, kami sangat menyarankan Anda melakukan servis lebih awal di kelipatan <strong>5.000 KM atau per 3 Bulan sekali</strong> tanpa harus menunggu angka 10.000 KM penuh.`;
-            rekomendasiSro = "KONDISI BERAT! SRO wajib follow-up lebih cepat per kelipatan 5.000 KM demi kesehatan mesin.";
-        }
-    } 
-    // 3. Evaluasi Aturan Servis Lanjutan (> 50.000 KM)
-    else {
-        let intervalKm, intervalBulan;
-        
-        if (kondisiJalan === "Normal") {
-            intervalKm = 10000;
-            intervalBulan = 6;
-            rekomendasiSro = "Servis Lanjutan (Berbayar). Follow-up standar per 10.000 KM / 6 Bulan.";
-            tipsCustomer = "Kupon Free Service Anda telah selesai. Disarankan melakukan servis rutin berkala setiap kelipatan <strong>10.000 KM atau 6 Bulan sekali</strong> untuk mempertahankan nilai jual kembali mobil Anda.";
-        } else {
-            intervalKm = 5000;
-            intervalBulan = 3;
-            rekomendasiSro = "Servis Lanjutan (Berbayar). KONDISI BERAT! Wajib follow-up per kelipatan 5.000 KM / 3 Bulan.";
-            tipsCustomer = "⚠️ <strong>Rekomendasi Khusus</strong>: Kupon Free Service Anda telah selesai dan kendaraan Anda bekerja di rute yang berat harian. Kami sangat menyarankan servis berkala mandiri setiap kelipatan <strong>5.000 KM atau 3 Bulan sekali</strong> agar komponen mesin tidak mengalami aus dini.";
-        }
-
-        targetKm = Math.ceil((odometer + 1) / intervalKm) * intervalKm;
-        targetBulan = Math.ceil((bulan + 1) / intervalBulan) * intervalBulan;
-        statusBiayaCustomer = "⚫ SERVIS BERKALA REGULER (Berbayar Penuh)";
-        cakupanPengerjaan = `Servis Lanjutan Reguler Target ${targetKm.toLocaleString('id-ID')} KM. Seluruh komponen biaya Jasa Pengecekan, Oli Mesin, dan penggantian Suku Cadang sepenuhnya ditanggung secara mandiri oleh pemilik kendaraan.`;
+    } else {
+        // Target dihitung progresif dari jejak servis terakhir
+        targetKm = odometerTerakhir + intervalKm;
+        targetBulan = bulanTerakhir + intervalBulan;
     }
 
-    // Hitung Mundur Sisa Batas Aman (Countdown)
+    // 3. Evaluasi Benefit & Kupon Berdasarkan Target Baru
+    if (targetKm <= 1000) {
+        statusBiayaCustomer = "🔴 GRATIS BIAYA JASA (Pemeriksaan 23 Bagian Kendaraan)";
+        cakupanPengerjaan = "Pemeriksaan menggunakan Kupon Free Service 1, HANYA dilakukan pemeriksaan menyeluruh (Checking Only).";
+        tipsCustomer = "Segera jadwalkan kunjungan agar garansi utama mobil tetap aktif!";
+        rekomendasiSro = "Free Service 1. Wajib arahkan ke bengkel resmi.";
+    } else if (targetKm <= 55000) { // Toleransi sampai 55k untuk pembacaan kupon
+        let namaKupon = "";
+        let kuponBracket = Math.ceil(targetKm / 10000) * 10000; // Pembulatan ke atas untuk sinkronisasi nama kupon pabrikan
+
+        if (kuponBracket <= 10000) namaKupon = "Kupon Free Service 2";
+        else if (kuponBracket === 20000) namaKupon = "Kupon Free Service 3";
+        else if (kuponBracket === 30000) namaKupon = "Kupon Free Service 4";
+        else if (kuponBracket === 40000) namaKupon = "Kupon Free Service 5";
+        else namaKupon = "Kupon Free Service 6";
+
+        if (tipeMobil.includes("New Carry Pickup")) {
+            statusBiayaCustomer = "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Filter Oli)";
+            cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong> untuk Target ${targetKm.toLocaleString('id-ID')} KM. Bebas biaya Jasa, Oli, dan Filter.`;
+        } else if (tipeMobil.includes("All New Ertiga") || tipeMobil.includes("XL7")) {
+            statusBiayaCustomer = "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Seluruh Suku Cadang Berkala)";
+            cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong> untuk Target ${targetKm.toLocaleString('id-ID')} KM. Gratis biaya Jasa, Oli, dan Suku Cadang berkala resmi.`;
+        } else {
+            statusBiayaCustomer = "🟡 GRATIS BIAYA JASA SAJA (Oli & Part Berbayar)";
+            cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong> untuk Target ${targetKm.toLocaleString('id-ID')} KM. Gratis Jasa Servis berkala. Oli & Suku cadang berbayar mandiri.`;
+        }
+        
+        tipsCustomer = kondisiJalan === "Normal" 
+            ? `Berdasarkan histori pemakaian Anda, jadwal servis rutin direkomendasikan setiap penambahan <strong>10.000 KM atau 6 Bulan</strong>.` 
+            : `⚠️ Karena rute berat, direkomendasikan servis setiap penambahan <strong>5.000 KM atau 3 Bulan</strong> dari waktu terakhir servis.`;
+            
+        rekomendasiSro = `Kondisi: ${kondisiJalan}. Follow-up dari target sebelumnya: ${odometerTerakhir} KM.`;
+    } else {
+        statusBiayaCustomer = "⚫ SERVIS BERKALA REGULER (Berbayar Penuh)";
+        cakupanPengerjaan = `Servis Lanjutan Reguler Target ${targetKm.toLocaleString('id-ID')} KM. Seluruh komponen Jasa, Oli, dan Part ditanggung pelanggan.`;
+        tipsCustomer = "Kupon Free Service telah selesai. Lakukan perawatan rutin dari hitungan servis terakhir agar mesin awet.";
+        rekomendasiSro = `Servis Lanjutan (Berbayar). Target interval: +${intervalKm} KM.`;
+    }
+
+    // 4. HITUNG SELISIH AKTUAL (Sisa Waktu/Jarak)
     const sisaKm = targetKm - odometer;
     const sisaBulan = targetBulan - bulan;
 
-    // --- TAMBAHAN LOGIKA STATUS SERVIS ---
+    // 5. EVALUASI STATUS (Whichever Comes First)
     let statusServis = "";
     let alasanServis = "";
 
-    // 1. KONDISI LEWAT BATAS / WAJIB SERVIS
     if (sisaKm <= 0 || sisaBulan <= 0) {
         statusServis = "🔴 Wajib Servis Sekarang";
         if (sisaKm <= 0 && sisaBulan > 0) {
-            alasanServis = "Batas Jarak Tempuh (KM) telah tercapai/terlewat.";
+            alasanServis = `Batas Jarak Tempuh (${targetKm.toLocaleString('id-ID')} KM) telah tercapai/terlewat.`;
         } else if (sisaBulan <= 0 && sisaKm > 0) {
-            alasanServis = "Batas Waktu (Bulan) telah tercapai/terlewat.";
+            alasanServis = `Batas Waktu (Bulan ke-${targetBulan}) telah tercapai/terlewat.`;
         } else {
             alasanServis = "Batas Jarak Tempuh dan Waktu keduanya telah tercapai/terlewat.";
         }
-    } 
-    // 2. KONDISI MENDEKATI BATAS (Warning / Pengingat)
-    else if (sisaKm <= 1000 || sisaBulan <= 1) {
+    } else if (sisaKm <= 1000 || sisaBulan <= 1) {
         statusServis = "🟡 Mendekati Batas Servis";
-        alasanServis = "Segera jadwalkan booking servis Anda dalam waktu dekat.";
-    } 
-    // 3. KONDISI AMAN
-    else {
+        alasanServis = "Segera jadwalkan booking servis Anda sebelum melewati target.";
+    } else {
         statusServis = "🟢 Aman";
-        alasanServis = "Kondisi jarak dan waktu masih dalam batas aman.";
+        alasanServis = "Kondisi kendaraan Anda saat ini masih dalam batas aman berkendara.";
     }
 
     return {
@@ -402,8 +379,10 @@ function calculateServiceSchedule(data) {
         rekomendasiSro,
         sisaKm,
         sisaBulan,
-        statusServis, 
-        alasanServis
+        statusServis,
+        alasanServis,
+        odometerTerakhir, // Disimpan ke record
+        bulanTerakhir     // Disimpan ke record
     };
 }
 
@@ -437,13 +416,10 @@ async function handleFormSubmit(e) {
         noHpInput.closest(".input-group").classList.add("error");
         isValid = false;
     }
-
-    // TAMBAHKAN VALIDASI ODOMETER DI SINI
     if (!odometerInput.value.trim()) {
         odometerInput.closest(".input-group").classList.add("error");
         isValid = false;
     }
-    // TAMBAHKAN VALIDASI TIPE MOBIL DI SINI
     if (!carDropdown.value) {
         carDropdown.closest(".input-group").classList.add("error");
         isValid = false;
@@ -454,7 +430,7 @@ async function handleFormSubmit(e) {
     submitBtn.classList.add("loading");
     submitBtn.disabled = true;
 
-    // Compile inputs
+    // Compile inputs (TERMASUK SERVIS TERAKHIR)
     const inputData = {
         namaPelanggan: namaInput.value.trim(),
         nopol: nopolInput.value.trim().toUpperCase(),
@@ -462,6 +438,8 @@ async function handleFormSubmit(e) {
         tipeMobil: carDropdown.value,
         odometer: parseInt(odometerInput.value) || 0,
         bulan: parseInt(bulanInput.value) || 0,
+        odometerTerakhir: parseInt(document.getElementById("odometer_terakhir").value) || 0, // TAMBAHAN
+        bulanTerakhir: parseInt(document.getElementById("bulan_terakhir").value) || 0,       // TAMBAHAN
         kondisiJalan: form.querySelector('input[name="kondisi_jalan"]:checked').value
     };
 
@@ -532,7 +510,7 @@ function updateResultsUI(res) {
     
     document.getElementById("target-header-badge").innerText = `Target: ${res.targetKm.toLocaleString('id-ID')} KM / Bln ${res.targetBulan}`;
 
-    // Target summary text card (Diperbarui dengan Logika Baru)
+    // Target summary text card
     document.getElementById("target-summary-text").innerHTML = `
         <strong style="font-size: 1.05rem; display: block; margin-bottom: 4px;">${res.statusServis}</strong>
         ${res.alasanServis}<br>
@@ -614,7 +592,7 @@ function handleWhatsAppShare() {
     const cleanCoverage = r.cakupanPengerjaan.replace(/<\/?[^>]+(>|$)/g, "");
     const cleanTips = r.tipsCustomer.replace(/<\/?[^>]+(>|$)/g, "");
     
-    // Format Pesan WhatsApp dengan Logika Baru
+    // Format Pesan WhatsApp
     const msg = `Halo Kak *${r.namaPelanggan}*,\n\n` + 
                 `Berikut adalah hasil analisis jadwal servis berkala mobil *${r.tipeMobil}* Anda (No. Polisi: *${r.nopol}*):\n\n` + 
                 `*Status Kendaraan:* ${r.statusServis}\n` +
@@ -659,7 +637,7 @@ function fetchHistory() {
                     minute: '2-digit'
                 });
 
-                // Strip HTML tag markings from cost description for display in SRO log table
+                // Strip HTML tag markings from cost description
                 const cleanCost = record.statusBiayaCustomer ? record.statusBiayaCustomer.replace(/<\/?[^>]+(>|$)/g, "") : "-";
 
                 tr.innerHTML = `
@@ -696,6 +674,10 @@ window.loadHistoryRecord = (id) => {
     document.getElementById("tipe_mobil").value = record.tipeMobil;
     document.getElementById("odometer").value = record.odometer;
     document.getElementById("bulan").value = record.bulan;
+    
+    // TAMBAHAN: Isi juga form Histori Servis Terakhir jika datanya ada
+    document.getElementById("odometer_terakhir").value = record.odometerTerakhir || 0;
+    document.getElementById("bulan_terakhir").value = record.bulanTerakhir || 0;
 
     // Toggle road condition radio selection
     const radios = document.getElementsByName("kondisi_jalan");
