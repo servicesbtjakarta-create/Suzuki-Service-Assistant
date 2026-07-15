@@ -1477,3 +1477,22 @@ html, body {
     flex: 1 1 auto;
     min-width: 150px; /* Lebar minimal tombol */
 }
+/* =========================================
+   MODE CETAK (PRINT)
+   ========================================= */
+@media print {
+    /* Sembunyikan semua tombol aksi (WhatsApp, Booking, Cetak) saat di-print */
+    .action-buttons {
+        display: none !important;
+    }
+
+    /* Opsional: Menyembunyikan form input sebelah kiri agar hasil cetak full fokus ke hasil analisa */
+    .form-panel {
+        display: none !important;
+    }
+    
+    /* Opsional: Membuat panel hasil mengambil lebar penuh saat dicetak */
+    .results-panel {
+        width: 100% !important;
+        box-shadow: none !important; /* Menghilangkan bayangan agar hemat tinta */
+    }
