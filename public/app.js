@@ -17,6 +17,16 @@ let cachedHistory = []; // Cache for submissions history
 document.addEventListener("DOMContentLoaded", () => {
     // Populate Tipe Mobil Dropdown
     const carDropdown = document.getElementById("tipe_mobil");
+    
+    // 1. Buat opsi default "Pilih Tipe Kendaraan"
+    const defaultOption = document.createElement("option");
+    defaultOption.value = ""; // Value kosong agar terbaca belum diisi
+    defaultOption.textContent = "-- Pilih Tipe Kendaraan --";
+    defaultOption.disabled = true; // Tidak bisa dipilih kembali setelah diubah
+    defaultOption.selected = true; // Menjadi pilihan pertama saat web dibuka
+    carDropdown.appendChild(defaultOption);
+
+    // 2. Masukkan daftar mobil dari DAFTAR_SUZUKI
     DAFTAR_SUZUKI.forEach(car => {
         const option = document.createElement("option");
         option.value = car;
