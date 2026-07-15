@@ -234,13 +234,22 @@
                             </svg>
                             Kirim Ke WhatsApp
                         </button>
+                        <button id="booking-btn" class="action-btn" style="background-color: #007bff; color: white;">
+  <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+    <line x1="16" y1="2" x2="16" y2="6"></line>
+    <line x1="8" y1="2" x2="8" y2="6"></line>
+    <line x1="3" y1="10" x2="21" y2="10"></line>
+  </svg> 
+  Booking Sekarang
+</button>
                         <button id="print-btn" class="action-btn print-btn">
                             <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
                                 <polyline points="6 9 6 2 18 2 18 9"/>
                                 <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
                                 <rect x="6" y="14" width="12" height="8"/>
                             </svg>
-                            Cetak Laporan
+                            Cetak Analisa
                         </button>
                     </div>
                 </div>
@@ -340,5 +349,45 @@
     </div>
 
     <script src="app.js"></script>
+    <div id="booking-modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+  <div style="background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <span id="close-booking-modal" style="float: right; cursor: pointer; font-size: 24px; font-weight: bold; color: #555;">&times;</span>
+    <h3 style="margin-top: 0; color: #333;">Form Booking Servis</h3>
+    
+    <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+      <strong style="font-size: 0.9rem; color: #555;">Data Pelanggan & Kendaraan:</strong>
+      <p id="booking-display-data" style="margin: 5px 0 0 0; font-size: 0.95rem; color: #333;"></p>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label for="booking-date" style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Tanggal Booking:</label>
+      <input type="date" id="booking-date" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label for="booking-branch" style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Pilih Cabang:</label>
+      <select id="booking-branch" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        <option value="">-- Pilih Cabang --</option>
+        <option value="Suzuki Pulogadung">Suzuki Pulogadung</option>
+        <option value="Suzuki Bumi Serpong Damai">Suzuki Bumi Serpong Damai</option>
+        <option value="Suzuki PIK">Suzuki PIK</option>
+        <option value="Suzuki Dewi Sartika">Suzuki Dewi Sartika</option>
+        <option value="Suzuki Sunter">Suzuki Sunter</option>
+        <option value="Suzuki Harapan Indah">Suzuki Harapan Indah</option>
+        <option value="Suzuki Lippo Cikarang">Suzuki Lippo Cikarang</option>
+        <option value="Suzuki Gading Serpong">Suzuki Gading Serpong</option>
+        <option value="Suzuki Puri Indah">Suzuki Puri Indah</option>
+        <option value="Suzuki Grand Wisata">Suzuki Grand Wisata</option>
+        <option value="Suzuki Sawangan">Suzuki Sawangan</option>
+        <option value="Suzuki Depok">Suzuki Depok</option>
+        <option value="Suzuki Kalimalang">Suzuki Kalimalang</option>
+      </select>
+    </div>
+
+    <button id="submit-booking-btn" style="width: 100%; background-color: #25D366; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1rem;">
+      Daftar Booking (WhatsApp)
+    </button>
+  </div>
+</div>
 </body>
 </html>
