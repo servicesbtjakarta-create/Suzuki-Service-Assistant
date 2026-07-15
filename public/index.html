@@ -349,153 +349,132 @@
     </div>
 
     <script src="app.js"></script>
+
     <div id="booking-modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
-  <div style="background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    <span id="close-booking-modal" style="float: right; cursor: pointer; font-size: 24px; font-weight: bold; color: #555;">&times;</span>
-    <h3 style="margin-top: 0; color: #333;">Form Booking Servis</h3>
-    
-    <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-      <strong style="font-size: 0.9rem; color: #555;">Data Pelanggan & Kendaraan:</strong>
-      <p id="booking-display-data" style="margin: 5px 0 0 0; font-size: 0.95rem; color: #333;"></p>
-    </div>
+        <div style="background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <span id="close-booking-modal" style="float: right; cursor: pointer; font-size: 24px; font-weight: bold; color: #555;">&times;</span>
+            <h3 style="margin-top: 0; color: #333;">Form Booking Servis</h3>
+            
+            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                <strong style="font-size: 0.9rem; color: #555;">Data Pelanggan & Kendaraan:</strong>
+                <p id="booking-display-data" style="margin: 5px 0 0 0; font-size: 0.95rem; color: #333;"></p>
+            </div>
 
-    <div style="margin-bottom: 15px;">
-      <label for="booking-date" style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Tanggal Booking:</label>
-      <input type="date" id="booking-date" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-    </div>
+            <div style="margin-bottom: 15px;">
+                <label for="booking-date" style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Tanggal Booking:</label>
+                <input type="date" id="booking-date" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+            </div>
 
-    <div style="margin-bottom: 20px;">
-      <label for="booking-branch" style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Pilih Cabang:</label>
-      <select id="booking-branch" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-        <option value="">-- Pilih Cabang --</option>
-        <option value="Suzuki Pulogadung">Suzuki Pulogadung</option>
-        <option value="Suzuki Bumi Serpong Damai">Suzuki Bumi Serpong Damai</option>
-        <option value="Suzuki PIK">Suzuki PIK</option>
-        <option value="Suzuki Dewi Sartika">Suzuki Dewi Sartika</option>
-        <option value="Suzuki Sunter">Suzuki Sunter</option>
-        <option value="Suzuki Harapan Indah">Suzuki Harapan Indah</option>
-        <option value="Suzuki Lippo Cikarang">Suzuki Lippo Cikarang</option>
-        <option value="Suzuki Gading Serpong">Suzuki Gading Serpong</option>
-        <option value="Suzuki Puri Indah">Suzuki Puri Indah</option>
-        <option value="Suzuki Grand Wisata">Suzuki Grand Wisata</option>
-        <option value="Suzuki Sawangan">Suzuki Sawangan</option>
-        <option value="Suzuki Depok">Suzuki Depok</option>
-        <option value="Suzuki Kalimalang">Suzuki Kalimalang</option>
-      </select>
-    </div>
+            <div style="margin-bottom: 20px;">
+                <label for="booking-branch" style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Pilih Cabang:</label>
+                <select id="booking-branch" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                    <option value="">-- Pilih Cabang --</option>
+                    <option value="Suzuki Pulogadung">Suzuki Pulogadung</option>
+                    <option value="Suzuki Bumi Serpong Damai">Suzuki Bumi Serpong Damai</option>
+                    <option value="Suzuki PIK">Suzuki PIK</option>
+                    <option value="Suzuki Dewi Sartika">Suzuki Dewi Sartika</option>
+                    <option value="Suzuki Sunter">Suzuki Sunter</option>
+                    <option value="Suzuki Harapan Indah">Suzuki Harapan Indah</option>
+                    <option value="Suzuki Lippo Cikarang">Suzuki Lippo Cikarang</option>
+                    <option value="Suzuki Gading Serpong">Suzuki Gading Serpong</option>
+                    <option value="Suzuki Puri Indah">Suzuki Puri Indah</option>
+                    <option value="Suzuki Grand Wisata">Suzuki Grand Wisata</option>
+                    <option value="Suzuki Sawangan">Suzuki Sawangan</option>
+                    <option value="Suzuki Depok">Suzuki Depok</option>
+                    <option value="Suzuki Kalimalang">Suzuki Kalimalang</option>
+                </select>
+            </div>
 
-    <button id="submit-booking-btn" style="width: 100%; background-color: #25D366; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1rem;">
-      Daftar Booking (WhatsApp)
-    </button>
-  </div>
-</div>
-
-    <div id="booking-modal" ... > 
-       ... 
+            <button id="submit-booking-btn" style="width: 100%; background-color: #25D366; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1rem;">
+                Daftar Booking (WhatsApp)
+            </button>
+        </div>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-       <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const bookingBtn = document.getElementById('booking-btn');
-    const bookingModal = document.getElementById('booking-modal');
-    const closeBookingModal = document.getElementById('close-booking-modal');
-    const submitBookingBtn = document.getElementById('submit-booking-btn');
+        const bookingBtn = document.getElementById('booking-btn');
+        const bookingModal = document.getElementById('booking-modal');
+        const closeBookingModal = document.getElementById('close-booking-modal');
+        const submitBookingBtn = document.getElementById('submit-booking-btn');
 
-    // Buka Modal ketika tombol Booking di klik
-    if(bookingBtn) {
-        bookingBtn.addEventListener('click', function(e) {
-            e.preventDefault(); // Mencegah reload jika tombol berada di dalam tag form
-            bookingModal.style.display = 'block';
+        // Buka Modal ketika tombol Booking di klik
+        if(bookingBtn) {
+            bookingBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // Mencegah reload jika tombol berada di dalam tag form
+                bookingModal.style.display = 'block';
 
-            // Ambil value dari input form menggunakan ID yang Anda berikan
-            const customerName = document.getElementById('nama_pelanggan')?.value || '-';
-            const nopol = document.getElementById('nopol')?.value || '-';
-            
-            // Khusus tipe_mobil (select), kita ambil teks dari opsi yang dipilih jika memungkinkan, atau valuenya
-            const tipeMobilSelect = document.getElementById('tipe_mobil');
-            const tipeMobil = tipeMobilSelect && tipeMobilSelect.selectedIndex >= 0 
-                              ? tipeMobilSelect.options[tipeMobilSelect.selectedIndex].text 
-                              : '-';
-                              
-            const odometer = document.getElementById('odometer')?.value || '0';
+                // Ambil value dari input form
+                const customerName = document.getElementById('nama_pelanggan')?.value || '-';
+                const nopol = document.getElementById('nopol')?.value || '-';
+                
+                // Khusus tipe_mobil (select)
+                const tipeMobilSelect = document.getElementById('tipe_mobil');
+                const tipeMobil = tipeMobilSelect && tipeMobilSelect.selectedIndex >= 0 
+                                  ? tipeMobilSelect.options[tipeMobilSelect.selectedIndex].text 
+                                  : '-';
+                                  
+                const odometer = document.getElementById('odometer')?.value || '0';
 
-            // Tampilkan di dalam pop up
-            document.getElementById('booking-display-data').innerHTML = `
-                <b>Nama:</b> ${customerName} <br>
-                <b>Kendaraan:</b> ${tipeMobil} (${nopol}) <br>
-                <b>Odometer:</b> ${odometer} KM
-            `;
+                // Tampilkan di dalam pop up
+                document.getElementById('booking-display-data').innerHTML = `
+                    <b>Nama:</b> ${customerName} <br>
+                    <b>Kendaraan:</b> ${tipeMobil} (${nopol}) <br>
+                    <b>Odometer:</b> ${odometer} KM
+                `;
+            });
+        }
+
+        // Tutup Modal via tanda (x)
+        if(closeBookingModal) {
+            closeBookingModal.addEventListener('click', function() {
+                bookingModal.style.display = 'none';
+            });
+        }
+
+        // Tutup Modal jika area luar pop-up di klik
+        window.addEventListener('click', function(event) {
+            if (event.target == bookingModal) {
+                bookingModal.style.display = 'none';
+            }
         });
-    }
 
-    // Tutup Modal via tanda (x)
-    if(closeBookingModal) {
-        closeBookingModal.addEventListener('click', function() {
-            bookingModal.style.display = 'none';
-        });
-    }
+        // Proses klik Daftar Booking ke WhatsApp
+        if(submitBookingBtn) {
+            submitBookingBtn.addEventListener('click', function() {
+                const bookingDate = document.getElementById('booking-date').value;
+                const bookingBranch = document.getElementById('booking-branch').value;
 
-    // Tutup Modal jika area luar pop-up di klik
-    window.addEventListener('click', function(event) {
-        if (event.target == bookingModal) {
-            bookingModal.style.display = 'none';
+                // Validasi kelengkapan form pop-up
+                if(!bookingDate || !bookingBranch) {
+                    alert('Mohon lengkapi Tanggal Booking dan Cabang terlebih dahulu.');
+                    return;
+                }
+
+                // Ambil ulang data form untuk dimasukkan ke pesan WA
+                const customerName = document.getElementById('nama_pelanggan')?.value || '-';
+                const nopol = document.getElementById('nopol')?.value || '-';
+                const tipeMobilSelect = document.getElementById('tipe_mobil');
+                const tipeMobil = tipeMobilSelect && tipeMobilSelect.selectedIndex >= 0 
+                                  ? tipeMobilSelect.options[tipeMobilSelect.selectedIndex].text 
+                                  : '-';
+                const odometer = document.getElementById('odometer')?.value || '0';
+
+                // Target No WA
+                const waNumber = '6281240007197'; 
+                
+                // Format Pesan
+                const message = `Halo Admin, saya ingin mendaftar Booking Servis.\n\n*Data Pelanggan & Kendaraan:*\nNama: ${customerName}\nTipe Mobil: ${tipeMobil}\nNo. Polisi: ${nopol}\nOdometer Saat Ini: ${odometer} KM\n\n*Detail Booking:*\nTanggal: ${bookingDate}\nCabang: ${bookingBranch}\n\nMohon bantuannya untuk diproses. Terima kasih.`;
+
+                // Buka WhatsApp di tab baru
+                const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+                window.open(waUrl, '_blank');
+
+                // Tutup pop-up setelah diarahkan ke WA
+                bookingModal.style.display = 'none';
+            });
         }
     });
-
-    // Proses klik Daftar Booking ke WhatsApp
-    if(submitBookingBtn) {
-        submitBookingBtn.addEventListener('click', function() {
-            const bookingDate = document.getElementById('booking-date').value;
-            const bookingBranch = document.getElementById('booking-branch').value;
-
-            // Validasi kelengkapan form pop-up
-            if(!bookingDate || !bookingBranch) {
-                alert('Mohon lengkapi Tanggal Booking dan Cabang terlebih dahulu.');
-                return;
-            }
-
-            // Ambil ulang data form untuk dimasukkan ke pesan WA
-            const customerName = document.getElementById('nama_pelanggan')?.value || '-';
-            const nopol = document.getElementById('nopol')?.value || '-';
-            const tipeMobilSelect = document.getElementById('tipe_mobil');
-            const tipeMobil = tipeMobilSelect && tipeMobilSelect.selectedIndex >= 0 
-                              ? tipeMobilSelect.options[tipeMobilSelect.selectedIndex].text 
-                              : '-';
-            const odometer = document.getElementById('odometer')?.value || '0';
-
-            // Target No WA
-            const waNumber = '6281240007197'; 
-            
-            // Format Pesan
-            const message = `Halo Admin, saya ingin mendaftar Booking Servis.
-            
-*Data Pelanggan & Kendaraan:*
-Nama: ${customerName}
-Tipe Mobil: ${tipeMobil}
-No. Polisi: ${nopol}
-Odometer Saat Ini: ${odometer} KM
-
-*Detail Booking:*
-Tanggal: ${bookingDate}
-Cabang: ${bookingBranch}
-
-Mohon bantuannya untuk diproses. Terima kasih.`;
-
-            // Buka WhatsApp di tab baru
-            const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
-            window.open(waUrl, '_blank');
-
-            // Tutup pop-up setelah diarahkan ke WA
-            bookingModal.style.display = 'none';
-        });
-    }
-});
-</script>
-    });
     </script>
-</body>
-</html>
 </body>
 </html>
