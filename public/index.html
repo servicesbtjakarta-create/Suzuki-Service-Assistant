@@ -95,14 +95,15 @@
                     <hr class="divider">
 
                     <div class="form-grid-2">
-                        <div class="input-group">
-                            <label for="odometer">Odometer Saat Ini (KM)</label>
-                            <div class="number-input-wrapper">
-                                <button type="button" class="num-step-btn minus" id="odometer-minus">−</button>
-                                <input type="number" id="odometer" name="odometer" min="0" value="0" step="500">
-                                <button type="button" class="num-step-btn plus" id="odometer-plus">+</button>
-                            </div>
-                        </div>
+    <div class="input-group">
+        <label for="odometer">Odometer Saat Ini (KM) <span class="required">*</span></label>
+        <div class="number-input-wrapper">
+            <button type="button" class="num-step-btn minus" id="odometer-minus">−</button>
+            <input type="number" id="odometer" name="odometer" min="0" placeholder="0" step="500" required>
+            <button type="button" class="num-step-btn plus" id="odometer-plus">+</button>
+        </div>
+        <span class="error-msg">Odometer wajib diisi</span>
+    </div>
                         <div class="input-group">
                             <label for="bulan">Usia Mobil (Bulan dari Pembelian) Opsional</label>
                             <div class="number-input-wrapper">
