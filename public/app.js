@@ -270,7 +270,6 @@ function setupEventListeners() {
                 input.closest(".input-group").classList.remove("error");
             }
         });
-    });
 }
 
 // --- CORE RAG LOGIC & CALCULATIONS ---
