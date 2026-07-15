@@ -167,11 +167,21 @@ function setupEventListeners() {
         window.location.href = "/";
     });
 
-    // CSV Download trigger
-    const downloadCsvBtn = document.getElementById("download-csv-btn");
-    downloadCsvBtn.addEventListener("click", () => {
-        window.location.href = "/api/service-checks/csv";
-    });
+  // CSV Download trigger
+const downloadCsvBtn = document.getElementById("download-csv-btn");
+downloadCsvBtn.addEventListener("click", () => {
+    // Ambil nilai tanggal dari input kalender (jika ada)
+    const filterDate = document.getElementById("filter-date-csv")?.value;
+    let url = "/api/service-checks/csv";
+    
+    // Jika SRO memilih tanggal, tambahkan ke URL sebagai query parameter
+    if (filterDate) {
+        url += `?date=${filterDate}`;
+    }
+    
+    // Arahkan ke URL untuk memicu download
+    window.location.href = url;
+});
 
     // Login Form Submit Handling
     const loginForm = document.getElementById("login-form");
