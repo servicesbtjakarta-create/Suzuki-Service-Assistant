@@ -4,19 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suzuki Service Assistant</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Top Decorative Gradient Glows -->
     <div class="glow-bg glow-bg-1"></div>
     <div class="glow-bg glow-bg-2"></div>
 
     <div class="app-container">
-        <!-- Header -->
         <header class="app-header">
             <div class="brand-section">
                 <img src="assets/suzuki_logo_dealer.png" alt="Suzuki Buana Indomobil Trada Logo" class="brand-logo-img">
@@ -27,9 +24,7 @@
             </div>
             <div class="header-actions">
                 <button id="theme-toggle-btn" class="icon-btn" aria-label="Toggle Theme">
-                    <!-- Sun Icon -->
                     <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-                    <!-- Moon Icon -->
                     <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
                 </button>
                 <button id="settings-btn" class="icon-btn sro-only" aria-label="Settings" title="Pengaturan Webhook & Kredensial">
@@ -41,7 +36,6 @@
             </div>
         </header>
 
-        <!-- Main Banner -->
         <section class="hero-banner">
             <div class="hero-content">
                 <h1>Suzuki Service Assistant</h1>
@@ -52,9 +46,7 @@
             </div>
         </section>
 
-        <!-- Main Content Split Grid -->
         <main class="main-content">
-            <!-- Left Side: Input Form Card -->
             <section class="panel-card form-panel">
                 <div class="panel-header">
                     <span class="panel-icon">📋</span>
@@ -85,25 +77,25 @@
                             <span class="error-msg">Nomor WhatsApp wajib diisi</span>
                         </div>
                         <div class="input-group">
-    <label for="tipe_mobil">Tipe Mobil Suzuki <span class="required">*</span></label>
-    <select id="tipe_mobil" name="tipe_mobil" required>
-        </select>
-    <span class="error-msg">Tipe mobil wajib dipilih</span>
-</div>
+                            <label for="tipe_mobil">Tipe Mobil Suzuki <span class="required">*</span></label>
+                            <select id="tipe_mobil" name="tipe_mobil" required>
+                            </select>
+                            <span class="error-msg">Tipe mobil wajib dipilih</span>
+                        </div>
                     </div>
 
                     <hr class="divider">
 
                     <div class="form-grid-2">
-    <div class="input-group">
-        <label for="odometer">Odometer Saat Ini (KM) <span class="required">*</span></label>
-        <div class="number-input-wrapper">
-            <button type="button" class="num-step-btn minus" id="odometer-minus">−</button>
-            <input type="number" id="odometer" name="odometer" min="0" placeholder="0" step="500" required>
-            <button type="button" class="num-step-btn plus" id="odometer-plus">+</button>
-        </div>
-        <span class="error-msg">Odometer wajib diisi</span>
-    </div>
+                        <div class="input-group">
+                            <label for="odometer">Odometer Saat Ini (KM) <span class="required">*</span></label>
+                            <div class="number-input-wrapper">
+                                <button type="button" class="num-step-btn minus" id="odometer-minus">−</button>
+                                <input type="number" id="odometer" name="odometer" min="0" placeholder="0" step="500" required>
+                                <button type="button" class="num-step-btn plus" id="odometer-plus">+</button>
+                            </div>
+                            <span class="error-msg">Odometer wajib diisi</span>
+                        </div>
                         <div class="input-group">
                             <label for="bulan">Usia Mobil (Bulan dari Pembelian) Opsional</label>
                             <div class="number-input-wrapper">
@@ -113,6 +105,34 @@
                             </div>
                         </div>
                     </div>
+
+                    <hr class="divider">
+
+                    <div style="margin-bottom: 0.8rem;">
+                        <span style="font-size: 0.95rem; font-weight: 700; color: var(--text-title);">Histori Servis Terakhir (Opsional)</span>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Kosongkan jika belum pernah servis (0 KM).</p>
+                    </div>
+                    
+                    <div class="form-grid-2">
+                        <div class="input-group">
+                            <label for="odometer_terakhir">Odometer Saat Servis (KM)</label>
+                            <div class="number-input-wrapper">
+                                <button type="button" class="num-step-btn minus" id="odometer_terakhir-minus">−</button>
+                                <input type="number" id="odometer_terakhir" name="odometer_terakhir" min="0" placeholder="0" step="500">
+                                <button type="button" class="num-step-btn plus" id="odometer_terakhir-plus">+</button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="bulan_terakhir">Usia Mobil Saat Servis (Bulan)</label>
+                            <div class="number-input-wrapper">
+                                <button type="button" class="num-step-btn minus" id="bulan_terakhir-minus">−</button>
+                                <input type="number" id="bulan_terakhir" name="bulan_terakhir" min="0" placeholder="0" step="1">
+                                <button type="button" class="num-step-btn plus" id="bulan_terakhir-plus">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="divider">
 
                     <div class="input-group">
                         <label>Kondisi Rute Berkendara Sehari-hari</label>
@@ -147,9 +167,7 @@
                 </form>
             </section>
 
-            <!-- Right Side: Animated Dashboard Results Card -->
             <section class="panel-card results-panel empty-state" id="results-panel">
-                <!-- Empty State View -->
                 <div class="results-empty" id="results-empty-view">
                     <div class="empty-icon-pulse">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="analysis-icon">
@@ -162,7 +180,6 @@
                     <p>Silakan isi data kendaraan Anda di sebelah kiri lalu klik tombol <strong>Periksa Jadwal Service</strong> untuk melihat analisis batas aman dan rekomendasi perawatan.</p>
                 </div>
 
-                <!-- Active Analysis Results (Hidden initially) -->
                 <div class="results-content hidden" id="results-content-view">
                     <div class="results-header">
                         <div>
@@ -172,7 +189,6 @@
                         <div class="badge-km" id="target-header-badge">Target: 10,000 KM</div>
                     </div>
 
-                    <!-- Visual Progress Gauges -->
                     <div class="visual-gauges">
                         <div class="gauge-card" id="gauge-km-card">
                             <div class="gauge-header">
@@ -193,7 +209,6 @@
                         </div>
                     </div>
 
-                    <!-- Target Card Info -->
                     <div class="info-alert-card" id="target-summary-card">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                         <div>
@@ -202,7 +217,6 @@
                         </div>
                     </div>
 
-                    <!-- Dynamic Details Tabs or Cards -->
                     <div class="details-section">
                         <div class="detail-block">
                             <h3 class="detail-title cost-status-title">💰 Status Biaya & Benefit Anda</h3>
@@ -227,7 +241,6 @@
                         </div>
                     </div>
 
-                    <!-- Actions -->
                     <div class="action-buttons">
                         <button id="whatsapp-share-btn" class="action-btn wa-btn sro-only">
                             <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
@@ -257,7 +270,6 @@
             </section>
         </main>
 
-        <!-- SRO History Log Panel (SRO-only) -->
         <section class="panel-card sro-history-panel sro-only" id="history-panel" style="margin-top: 1rem; width: 100%;">
             <div class="history-table-wrapper">
                 <table class="history-table">
@@ -304,7 +316,6 @@
         </section>
     </div>
 
-    <!-- Settings Overlay Drawer -->
     <div id="settings-drawer" class="drawer-overlay">
         <div class="drawer-content">
             <div class="drawer-header">
@@ -334,7 +345,6 @@
         </div>
     </div>
 
-    <!-- Login Overlay Drawer / Modal -->
     <div id="login-modal" class="drawer-overlay">
         <div class="drawer-content login-content" style="max-width: 400px; margin: auto; height: max-content; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); transform: scale(0.9); opacity: 0; transition: transform var(--transition-normal), opacity var(--transition-normal); padding: 2.5rem;">
             <div class="drawer-header">
