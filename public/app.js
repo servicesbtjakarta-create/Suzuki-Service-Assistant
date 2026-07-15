@@ -421,3 +421,311 @@ async function handleFormSubmit(e) {
     const submitBtn = document.getElementById("submit-btn");
 
     // Reset validations
+    let isValid = true;
+    form.querySelectorAll(".input-group").forEach(el => el.classList.remove("error"));
+
+    // Validation checks
+    if (!namaInput.value.trim()) {
+        namaInput.closest(".input-group").classList.add("error");
+        isValid = false;
+    }
+    if (!nopolInput.value.trim()) {
+        nopolInput.closest(".input-group").classList.add("error");
+        isValid = false;
+    }
+    if (!noHpInput.value.trim()) {
+        noHpInput.closest(".input-group").classList.add("error");
+        isValid = false;
+    }
+
+    // TAMBAHKAN VALIDASI ODOMETER DI SINI
+    if (!odometerInput.value.trim()) {
+        odometerInput.closest(".input-group").classList.add("error");
+        isValid = false;
+    }
+    // TAMBAHKAN VALIDASI TIPE MOBIL DI SINI
+    if (!carDropdown.value) {
+        carDropdown.closest(".input-group").classList.add("error");
+        isValid = false;
+    }
+    if (!isValid) return;
+
+    // Show Loading state
+    submitBtn.classList.add("loading");
+    submitBtn.disabled = true;
+
+    // Compile inputs
+    const inputData = {
+        namaPelanggan: namaInput.value.trim(),
+        nopol: nopolInput.value.trim().toUpperCase(),
+        noHp: noHpInput.value.trim(),
+        tipeMobil: carDropdown.value,
+        odometer: parseInt(odometerInput.value) || 0,
+        bulan: parseInt(bulanInput.value) || 0,
+        kondisiJalan: form.querySelector('input[name="kondisi_jalan"]:checked').value
+    };
+
+    // Calculate results
+    const calculatedResults = calculateServiceSchedule(inputData);
+    currentResults = { ...inputData, ...calculatedResults };
+
+    // Format WhatsApp phone number (must start with 62)
+    let formattedPhone = currentResults.noHp;
+    if (formattedPhone.startsWith("0")) {
+        formattedPhone = formattedPhone.substring(1);
+    }
+    if (!formattedPhone.startsWith("62")) {
+        formattedPhone = "62" + formattedPhone;
+    }
+    currentResults.noHpFormatted = formattedPhone;
+
+    // Render results to the dashboard UI
+    updateResultsUI(currentResults);
+
+    // Send payload to local Express backend server
+    try {
+        const response = await fetch('/api/service-checks', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(currentResults)
+        });
+        
+        const data = await response.json();
+        console.log("Data saved and webhook relayed successfully:", data);
+        
+        // Reload history logs if in SRO mode
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("role") === "sro") {
+            fetchHistory();
+        }
+    } catch (err) {
+        console.warn("Could not reach local Express backend API server:", err);
+    } finally {
+        // Reset loading status
+        submitBtn.classList.remove("loading");
+        submitBtn.disabled = false;
+    }
+}
+
+// --- UPDATE RESULTS UI ---
+function updateResultsUI(res) {
+    const resultsPanel = document.getElementById("results-panel");
+    const emptyView = document.getElementById("results-empty-view");
+    const contentView = document.getElementById("results-content-view");
+
+    // Shift dashboard classes
+    resultsPanel.classList.remove("empty-state");
+    emptyView.classList.add("hidden");
+    contentView.classList.remove("hidden");
+    contentView.classList.add("animate-in");
+    
+    // Remove anim class after running to allow re-trigger animation
+    setTimeout(() => contentView.classList.remove("animate-in"), 500);
+
+    // Update Basic text fields
+    document.getElementById("res-car-title").innerText = res.tipeMobil;
+    document.getElementById("res-cust-name").innerText = res.namaPelanggan;
+    document.getElementById("res-nopol").innerText = res.nopol;
+    document.getElementById("res-odometer").innerText = res.odometer.toLocaleString('id-ID'); 
+    
+    document.getElementById("target-header-badge").innerText = `Target: ${res.targetKm.toLocaleString('id-ID')} KM / Bln ${res.targetBulan}`;
+
+    // Target summary text card (Diperbarui dengan Logika Baru)
+    document.getElementById("target-summary-text").innerHTML = `
+        <strong style="font-size: 1.05rem; display: block; margin-bottom: 4px;">${res.statusServis}</strong>
+        ${res.alasanServis}<br>
+        <span style="font-size: 0.85rem; color: #666; margin-top: 6px; display: inline-block;">(Target Servis: ${res.targetKm.toLocaleString('id-ID')} KM atau Bulan ke-${res.targetBulan})</span>
+    `;
+
+    // Visual counts for KM
+    const kmValueEl = document.getElementById("gauge-km-value");
+    const kmStatusEl = document.getElementById("gauge-km-status");
+    const kmCardEl = document.getElementById("gauge-km-card");
+
+    // Reset gauge card classes
+    kmCardEl.className = "gauge-card";
+    
+    if (res.sisaKm >= 0) {
+        kmValueEl.innerText = `${res.sisaKm.toLocaleString('id-ID')} KM`;
+        kmStatusEl.innerText = "Aman";
+        
+        if (res.sisaKm <= 1000) {
+            kmCardEl.classList.add("status-alert");
+            kmStatusEl.innerText = "Mendekati Batas";
+        } else {
+            kmCardEl.classList.add("status-safe");
+        }
+    } else {
+        kmValueEl.innerText = `${Math.abs(res.sisaKm).toLocaleString('id-ID')} KM`;
+        kmStatusEl.innerText = "Terlewat!";
+        kmCardEl.classList.add("status-danger");
+    }
+
+    // Visual counts for Months
+    const timeValueEl = document.getElementById("gauge-time-value");
+    const timeStatusEl = document.getElementById("gauge-time-status");
+    const timeCardEl = document.getElementById("gauge-time-card");
+
+    // Reset gauge card classes
+    timeCardEl.className = "gauge-card";
+
+    if (res.sisaBulan >= 0) {
+        timeValueEl.innerText = `${res.sisaBulan} Bulan`;
+        timeStatusEl.innerText = "Aman";
+        
+        if (res.sisaBulan <= 1) {
+            timeCardEl.classList.add("status-alert");
+            timeStatusEl.innerText = "Mendekati Batas";
+        } else {
+            timeCardEl.classList.add("status-safe");
+        }
+    } else {
+        timeValueEl.innerText = `${Math.abs(res.sisaBulan)} Bulan`;
+        timeStatusEl.innerText = "Terlewat!";
+        timeCardEl.classList.add("status-danger");
+    }
+
+    // Cost status card content & styling
+    document.getElementById("res-cost-status-badge").innerHTML = res.statusBiayaCustomer;
+    document.getElementById("res-coverage-text").innerHTML = res.cakupanPengerjaan;
+    
+    // Tips maintenance card
+    document.getElementById("res-tips-text").innerHTML = res.tipsCustomer;
+
+    // SRO recommendation card
+    document.getElementById("res-sro-text").innerHTML = res.rekomendasiSro;
+
+    // Smooth Scroll to Results on Mobile
+    if (window.innerWidth <= 868) {
+        resultsPanel.scrollIntoView({ behavior: "smooth" });
+    }
+}
+
+// --- WHATSAPP MESSAGE REDIRECT COMPILER ---
+function handleWhatsAppShare() {
+    if (!currentResults) return;
+    
+    const r = currentResults;
+    
+    // Strip HTML tag markings from status / details for text output
+    const cleanCostStatus = r.statusBiayaCustomer.replace(/<\/?[^>]+(>|$)/g, "");
+    const cleanCoverage = r.cakupanPengerjaan.replace(/<\/?[^>]+(>|$)/g, "");
+    const cleanTips = r.tipsCustomer.replace(/<\/?[^>]+(>|$)/g, "");
+    
+    // Format Pesan WhatsApp dengan Logika Baru
+    const msg = `Halo Kak *${r.namaPelanggan}*,\n\n` + 
+                `Berikut adalah hasil analisis jadwal servis berkala mobil *${r.tipeMobil}* Anda (No. Polisi: *${r.nopol}*):\n\n` + 
+                `*Status Kendaraan:* ${r.statusServis}\n` +
+                `*Keterangan:* ${r.alasanServis}\n\n` +
+                `📍 *Detail Target Servis:*\n` +
+                `- Target KM: ${r.targetKm.toLocaleString('id-ID')} KM (Sisa: ${r.sisaKm.toLocaleString('id-ID')} KM)\n` +
+                `- Target Waktu: Bulan ke-${r.targetBulan} (Sisa: ${r.sisaBulan} Bulan)\n\n` +
+                `💰 *Status Biaya & Benefit:*\n${cleanCostStatus}\n${cleanCoverage}\n\n` + 
+                `💡 *Rekomendasi Perawatan:*\n${cleanTips}\n\n` + 
+                `Silakan tunjukkan pesan ini ke Service Advisor kami saat tiba di bengkel resmi Suzuki. Sampai jumpa!`;
+                
+    const encoded = encodeURIComponent(msg);
+    const waUrl = `https://wa.me/${r.noHpFormatted}?text=${encoded}`;
+    
+    window.open(waUrl, "_blank");
+}
+
+// --- SRO LOG SUBMISSIONS HISTORY API & RENDER ---
+function fetchHistory() {
+    const tableBody = document.getElementById("history-table-body");
+    fetch('/api/service-checks')
+        .then(res => res.json())
+        .then(data => {
+            cachedHistory = data;
+            
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem;">Belum ada log data masuk.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = "";
+            data.forEach(record => {
+                const tr = document.createElement("tr");
+                
+                // Format date cleanly
+                const dateObj = new Date(record.createdAt);
+                const formattedDate = dateObj.toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Strip HTML tag markings from cost description for display in SRO log table
+                const cleanCost = record.statusBiayaCustomer ? record.statusBiayaCustomer.replace(/<\/?[^>]+(>|$)/g, "") : "-";
+
+                tr.innerHTML = `
+                    <td><strong>${formattedDate}</strong></td>
+                    <td>${record.namaPelanggan}</td>
+                    <td><code style="text-transform: uppercase;">${record.nopol}</code></td>
+                    <td>+${record.noHpFormatted}</td>
+                    <td>${record.tipeMobil}</td>
+                    <td>${record.odometer.toLocaleString('id-ID')} KM</td>
+                    <td><strong>${record.targetKm.toLocaleString('id-ID')} KM</strong><br><span style="font-size: 0.75rem; color: var(--text-muted);">Bln ${record.targetBulan}</span></td>
+                    <td><span style="font-size: 0.8rem; font-weight: 500;">${cleanCost.substring(0, 30)}${cleanCost.length > 30 ? '...' : ''}</span></td>
+                    <td>
+                        <button class="history-action-btn" onclick="loadHistoryRecord('${record.id}')">👁️ Lihat</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        })
+        .catch(err => {
+            console.error("Gagal memuat riwayat log:", err);
+            tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--color-danger); padding: 2rem;">Gagal memuat log riwayat dari server.</td></tr>`;
+        });
+}
+
+// Load historical entry values back to form and trigger analysis display
+window.loadHistoryRecord = (id) => {
+    const record = cachedHistory.find(r => r.id === id);
+    if (!record) return;
+
+    // Populate input controls
+    document.getElementById("nama_pelanggan").value = record.namaPelanggan;
+    document.getElementById("nopol").value = record.nopol;
+    document.getElementById("no_hp").value = record.noHp;
+    document.getElementById("tipe_mobil").value = record.tipeMobil;
+    document.getElementById("odometer").value = record.odometer;
+    document.getElementById("bulan").value = record.bulan;
+
+    // Toggle road condition radio selection
+    const radios = document.getElementsByName("kondisi_jalan");
+    for (let radio of radios) {
+        if (radio.value === record.kondisiJalan) {
+            radio.checked = true;
+        }
+    }
+
+    // Clear previous error styles
+    document.querySelectorAll(".input-group").forEach(el => el.classList.remove("error"));
+
+    // Recalculate parameters
+    const results = calculateServiceSchedule(record);
+    currentResults = { ...record, ...results };
+
+    // Format WhatsApp phone number (must start with 62)
+    let formattedPhone = currentResults.noHp;
+    if (formattedPhone.startsWith("0")) {
+        formattedPhone = formattedPhone.substring(1);
+    }
+    if (!formattedPhone.startsWith("62")) {
+        formattedPhone = "62" + formattedPhone;
+    }
+    currentResults.noHpFormatted = formattedPhone;
+
+    // Force UI refresh
+    updateResultsUI(currentResults);
+    
+    // Smooth scroll to results
+    document.getElementById("results-panel").scrollIntoView({ behavior: "smooth" });
+
+};
