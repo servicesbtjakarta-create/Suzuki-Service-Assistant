@@ -167,77 +167,82 @@ function setupEventListeners() {
         window.location.href = "/";
     });
 
- // CSV Download trigger dengan Rentang Tanggal
-const downloadCsvBtn = document.getElementById("download-csv-btn");
-if (downloadCsvBtn) {
-    downloadCsvBtn.addEventListener("click", () => {
-        // Ambil nilai dari kedua input kalender
-        const startDate = document.getElementById("filter-start-date")?.value;
-        const endDate = document.getElementById("filter-end-date")?.value;
-        
-        let url = "/api/service-checks/csv";
-        let queryParams = [];
-        
-        // Jika user mengisi tanggal mulai
-        if (startDate) {
-            queryParams.push(`startDate=${startDate}`);
-        }
-        // Jika user mengisi tanggal akhir
-        if (endDate) {
-            queryParams.push(`endDate=${endDate}`);
-        }
-        
-        // Gabungkan parameter ke dalam URL (misal: ?startDate=2026-03-01&endDate=2026-03-31)
-        if (queryParams.length > 0) {
-            url += `?${queryParams.join("&")}`;
-        }
-        
-        // Arahkan ke URL untuk memicu download
-        window.location.href = url;
-    });
+    // CSV Download trigger dengan Rentang Tanggal
+    const downloadCsvBtn = document.getElementById("download-csv-btn");
+    if (downloadCsvBtn) {
+        downloadCsvBtn.addEventListener("click", () => {
+            // Ambil nilai dari kedua input kalender
+            const startDate = document.getElementById("filter-start-date")?.value;
+            const endDate = document.getElementById("filter-end-date")?.value;
+            
+            let url = "/api/service-checks/csv";
+            let queryParams = [];
+            
+            // Jika user mengisi tanggal mulai
+            if (startDate) {
+                queryParams.push(`startDate=${startDate}`);
+            }
+            // Jika user mengisi tanggal akhir
+            if (endDate) {
+                queryParams.push(`endDate=${endDate}`);
+            }
+            
+            // Gabungkan parameter ke dalam URL (misal: ?startDate=2026-03-01&endDate=2026-03-31)
+            if (queryParams.length > 0) {
+                url += `?${queryParams.join("&")}`;
+            }
+            
+            // Arahkan ke URL untuk memicu download
+            window.location.href = url;
+        });
+    } // <--- INI ADALAH PENUTUP YANG KURANG SEBELUMNYA
 
     // Login Form Submit Handling
     const loginForm = document.getElementById("login-form");
-    loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const usernameInput = document.getElementById("login-username").value.trim();
-        const passwordInput = document.getElementById("login-password").value.trim();
-        const errorMsgEl = document.getElementById("login-error-msg");
+    if(loginForm) {
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const usernameInput = document.getElementById("login-username").value.trim();
+            const passwordInput = document.getElementById("login-password").value.trim();
+            const errorMsgEl = document.getElementById("login-error-msg");
 
-        fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: usernameInput, password: passwordInput })
-        })
-        .then(res => {
-            if (!res.ok) {
-                return res.json().then(data => { throw new Error(data.error); });
-            }
-            return res.json();
-        })
-        .then(data => {
-            // Authentication successful
-            sessionStorage.setItem("sro_auth_token", data.token);
-            document.body.classList.add("role-sro");
-            document.getElementById("login-modal").classList.remove("active");
-            errorMsgEl.style.display = "none";
-            loginForm.reset();
-            
-            // Load and draw logs
-            fetchHistory();
-        })
-        .catch(err => {
-            errorMsgEl.innerText = err.message || "Username atau password salah!";
-            errorMsgEl.style.display = "block";
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: usernameInput, password: passwordInput })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(data => { throw new Error(data.error); });
+                }
+                return res.json();
+            })
+            .then(data => {
+                // Authentication successful
+                sessionStorage.setItem("sro_auth_token", data.token);
+                document.body.classList.add("role-sro");
+                document.getElementById("login-modal").classList.remove("active");
+                errorMsgEl.style.display = "none";
+                loginForm.reset();
+                
+                // Load and draw logs
+                fetchHistory();
+            })
+            .catch(err => {
+                errorMsgEl.innerText = err.message || "Username atau password salah!";
+                errorMsgEl.style.display = "block";
+            });
         });
-    });
+    }
 
     // Login Modal close/cancel redirection
     const closeLoginBtn = document.getElementById("close-login-btn");
-    closeLoginBtn.addEventListener("click", () => {
-        document.getElementById("login-modal").classList.remove("active");
-        window.location.href = "/";
-    });
+    if(closeLoginBtn) {
+        closeLoginBtn.addEventListener("click", () => {
+            document.getElementById("login-modal").classList.remove("active");
+            window.location.href = "/";
+        });
+    }
 
     // Clear validation error on type
     const requiredInputs = form.querySelectorAll("[required]");
