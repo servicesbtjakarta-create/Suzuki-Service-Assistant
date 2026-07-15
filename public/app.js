@@ -384,6 +384,11 @@ async function handleFormSubmit(e) {
         isValid = false;
     }
 
+    // TAMBAHKAN VALIDASI ODOMETER DI SINI
+    if (!odometerInput.value.trim()) {
+        odometerInput.closest(".input-group").classList.add("error");
+        isValid = false;
+    }
     if (!isValid) return;
 
     // Show Loading state
