@@ -296,8 +296,8 @@ function calculateServiceSchedule(data) {
     let intervalBulan = (kondisiJalan === "Normal") ? 6 : 3;
 
     // 2. HITUNG TARGET DINAMIS (Berdasarkan Servis Terakhir)
-    if (odometerTerakhir === 0 && bulanTerakhir === 0 && odometer <= 1000) {
-        // Pengecualian jika mobil benar-benar baru dan belum servis 1.000 KM
+    if (odometerTerakhir === 0 && bulanTerakhir === 0) {
+        // Jika belum pernah direkam servis sama sekali, target PERTAMA mutlak 1.000 KM
         targetKm = 1000;
         targetBulan = 1;
     } else {
@@ -310,43 +310,46 @@ function calculateServiceSchedule(data) {
     let targetKuponKm = targetKm;
     let isHangus = false;
     
-    // Cek batas toleransi +1.000 KM khusus untuk target dalam masa Free Service (<= 50.000 KM)
-    if (targetKm === 1000 && odometer > 2000) {
+    // A. Toleransi khusus Free Service 1 (Target 1.000 KM, batas maksimal klaim 2.000 KM)
+    if (targetKuponKm === 1000 && odometer > 2000) {
         isHangus = true;
         targetKuponKm = 10000; // Lompat ke FS 2
-    } else if (targetKm > 1000 && targetKm <= 50000) {
-        // Selama odometer aktual melampaui targetKupon + 1000, kupon tsb hangus, geser ke kupon berikutnya
-        while (odometer - targetKuponKm > 1000 && targetKuponKm <= 50000) {
-            isHangus = true;
-            targetKuponKm += 10000; 
-        }
+    }
+    
+    // B. Looping toleransi untuk kupon FS 2 s/d FS 6 (Kelipatan 10.000 KM)
+    // Jika Odometer aktual - Target Kupon > 1000 KM, kupon hangus, geser ke kupon berikutnya
+    while (odometer - targetKuponKm > 1000 && targetKuponKm <= 50000) {
+        isHangus = true;
+        targetKuponKm += 10000; 
     }
 
-    // 4. PENENTUAN STATUS BIAYA & BENEFIT KUPON
+    // 4. PENENTUAN STATUS BIAYA & BENEFIT KUPON BERDASARKAN KUPON YANG TERSEDIA
     if (targetKuponKm <= 1000) {
+        // Pelanggan tepat waktu untuk Kupon 1 (Odometer <= 2000 KM)
         statusBiayaCustomer = "🔴 GRATIS BIAYA JASA (Pemeriksaan 23 Bagian Kendaraan)";
         cakupanPengerjaan = "Pemeriksaan menggunakan Kupon Free Service 1, HANYA dilakukan pemeriksaan menyeluruh (Checking Only).";
         tipsCustomer = "Segera jadwalkan kunjungan agar garansi utama mobil tetap aktif!";
         rekomendasiSro = "Free Service 1. Wajib arahkan ke bengkel resmi.";
-    } else if (targetKuponKm <= 55000 && targetKuponKm > 1000) { // Toleransi sampai 55k untuk penamaan kupon terakhir
+
+    } else if (targetKuponKm <= 50000) {
+        // Pelanggan masuk di rentang Kupon 2 s/d 6
         let namaKupon = "";
-        // Pembulatan ke atas untuk sinkronisasi nama kupon pabrikan (10k=FS2, 20k=FS3, dst)
         let kuponNumber = (Math.ceil(targetKuponKm / 10000)) + 1; 
         
-        // Memastikan nomor kupon maksimal adalah 6 (Target 50k)
         if (kuponNumber > 6) kuponNumber = 6; 
         namaKupon = "Kupon Free Service " + kuponNumber;
 
+        // Pesan Hukuman jika ada kupon yang terlewat/hangus
         let hangusWarning = isHangus ? `<br><br><span style="color: #ef4444; font-weight: bold; padding: 4px 0; display: block;">⚠️ KUPON SEBELUMNYA HANGUS (Terlewat > 1.000 KM).</span> Anda terpaksa menggunakan jatah <strong>${namaKupon}</strong> untuk servis kali ini.` : "";
 
         if (tipeMobil.includes("New Carry Pickup")) {
-            statusBiayaCustomer = isHangus ? `🔴 MENGGUNAKAN FS ${kuponNumber}` : "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Filter Oli)";
+            statusBiayaCustomer = isHangus ? `🔴 MENGGUNAKAN KUPON FREE SERVICE ${kuponNumber}` : "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Filter Oli)";
             cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong>. Bebas biaya Jasa, Oli, dan Filter.${hangusWarning}`;
         } else if (tipeMobil.includes("All New Ertiga") || tipeMobil.includes("XL7")) {
-            statusBiayaCustomer = isHangus ? `🔴 MENGGUNAKAN FS ${kuponNumber}` : "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Seluruh Suku Cadang Berkala)";
+            statusBiayaCustomer = isHangus ? `🔴 MENGGUNAKAN KUPON FREE SERVICE ${kuponNumber}` : "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Seluruh Suku Cadang Berkala)";
             cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong>. Gratis biaya Jasa, Oli, dan Suku Cadang berkala resmi.${hangusWarning}`;
         } else {
-            statusBiayaCustomer = isHangus ? `🟡 MENGGUNAKAN FS ${kuponNumber}` : "🟡 GRATIS BIAYA JASA SAJA (Oli & Part Berbayar)";
+            statusBiayaCustomer = isHangus ? `🟡 MENGGUNAKAN KUPON FREE SERVICE ${kuponNumber}` : "🟡 GRATIS BIAYA JASA SAJA (Oli & Part Berbayar)";
             cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong>. Gratis Jasa Servis berkala. Oli & Suku cadang berbayar mandiri.${hangusWarning}`;
         }
         
@@ -354,9 +357,10 @@ function calculateServiceSchedule(data) {
             ? `Berdasarkan histori pemakaian Anda, jadwal servis rutin direkomendasikan setiap penambahan <strong>10.000 KM atau 6 Bulan</strong>.` 
             : `⚠️ Karena rute berat, direkomendasikan servis setiap penambahan <strong>5.000 KM atau 3 Bulan</strong> dari waktu terakhir servis.`;
             
-        rekomendasiSro = `Kondisi: ${kondisiJalan}. Target awal: ${targetKm} KM. Kupon yg diklaim: FS ${kuponNumber}.`;
+        rekomendasiSro = `Kondisi: ${kondisiJalan}. Target baca awal: ${targetKm} KM. Kupon yg diklaim: FS ${kuponNumber}.`;
+
     } else {
-        // targetKuponKm > 50000 (Masa Free Service habis atau Hangus semua)
+        // targetKuponKm > 50000 (Masa Free Service habis, atau pelanggan telat luar biasa sehingga Hangus semua)
         let hangusWarning = (targetKm <= 50000 && isHangus) 
             ? `<br><br><span style="color: #ef4444; font-weight: bold; padding: 4px 0; display: block;">⚠️ KUPON TERAKHIR HANGUS (Terlewat > 1.000 KM).</span> Hak kupon gratis Anda telah habis seluruhnya.` 
             : "";
@@ -367,7 +371,7 @@ function calculateServiceSchedule(data) {
         rekomendasiSro = `Servis Lanjutan (Berbayar). Target interval berikutnya: +${intervalKm} KM.`;
     }
 
-    // 5. HITUNG SELISIH AKTUAL (Sisa Waktu/Jarak dari Target Asli)
+    // 5. HITUNG SELISIH AKTUAL (Sisa Waktu/Jarak dari Target Asli, bukan Kupon)
     const sisaKm = targetKm - odometer;
     const sisaBulan = targetBulan - bulan;
 
