@@ -340,7 +340,7 @@ function calculateServiceSchedule(data) {
         namaKupon = "Kupon Free Service " + kuponNumber;
 
         // Pesan Hukuman jika ada kupon yang terlewat/hangus
-        let hangusWarning = isHangus ? `<br><br><span style="color: #ef4444; font-weight: bold; padding: 4px 0; display: block;">⚠️ KUPON SEBELUMNYA HANGUS (Terlewat > 1.000 KM).</span> Anda terpaksa menggunakan jatah <strong>${namaKupon}</strong> untuk servis kali ini.` : "";
+        let hangusWarning = isHangus ? `<br><br><span style="color: #ef4444; font-weight: bold; padding: 4px 0; display: block;">⚠️ KUPON SEBELUMNYA HANGUS (Terlewat > 1.000 KM).</span> Anda terpaksa menggunakan fasilitas <strong>${namaKupon}</strong> untuk servis kali ini.` : "";
 
         if (tipeMobil.includes("New Carry Pickup")) {
             statusBiayaCustomer = isHangus ? `🔴 MENGGUNAKAN KUPON FREE SERVICE ${kuponNumber}` : "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Filter Oli)";
