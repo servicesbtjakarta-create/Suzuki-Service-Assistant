@@ -289,8 +289,8 @@ function calculateServiceSchedule(data) {
     if (odometer <= 1000 && bulan <= 1) {
         targetKm = 1000;
         targetBulan = 1;
-        statusBiayaCustomer = "🔴 GRATIS BIAYA JASA (Kupon Free Service 1)";
-        cakupanPengerjaan = "Sesuai dengan ketentuan Buku Servis Resmi Suzuki, pada periode 1.000 KM pertama ini <strong>HANYA dilakukan pemeriksaan menyeluruh (Checking Only)</strong> pada komponen vital mobil. Belum ada penggantian oli atau suku cadang.";
+        statusBiayaCustomer = "🔴 GRATIS BIAYA JASA (Pemeriksaan 23 Bagian Kendaraan)";
+        cakupanPengerjaan = "Pemeriksaan Sesuai dengan ketentuan Buku Servis Resmi Suzuki menggunakan Kupon Free Service 1, pada periode 1.000 KM pertama ini <strong>HANYA dilakukan pemeriksaan menyeluruh (Checking Only)</strong> pada komponen vital mobil. Belum ada penggantian oli atau suku cadang.";
         tipsCustomer = "Segera jadwalkan kunjungan ke bengkel resmi Suzuki terdekat agar garansi utama mobil Anda tetap aktif!";
         rekomendasiSro = "Free Service 1 (Checking Only). Wajib arahkan ke bengkel resmi agar garansi aman.";
     } 
