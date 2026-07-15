@@ -399,6 +399,11 @@ async function handleFormSubmit(e) {
         odometerInput.closest(".input-group").classList.add("error");
         isValid = false;
     }
+    // TAMBAHKAN VALIDASI TIPE MOBIL DI SINI
+    if (!carDropdown.value) {
+        carDropdown.closest(".input-group").classList.add("error");
+        isValid = false;
+    }
     if (!isValid) return;
 
     // Show Loading state
