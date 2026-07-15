@@ -254,10 +254,18 @@ function setupEventListeners() {
         });
     }
 
-    // Clear validation error on type
+    // Clear validation error on type or change
     const requiredInputs = form.querySelectorAll("[required]");
     requiredInputs.forEach(input => {
+        // Untuk input teks biasa (Nama, No HP)
         input.addEventListener("input", () => {
+            if (input.value.trim() !== "") {
+                input.closest(".input-group").classList.remove("error");
+            }
+        });
+        
+        // Untuk kotak pilihan / dropdown (Tipe Mobil)
+        input.addEventListener("change", () => {
             if (input.value.trim() !== "") {
                 input.closest(".input-group").classList.remove("error");
             }
