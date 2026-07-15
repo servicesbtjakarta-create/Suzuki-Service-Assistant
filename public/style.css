@@ -1414,3 +1414,35 @@ input[type="date"] {
 body.role-sro #booking-btn {
     display: none !important;
 }
+/* =========================================
+   MODE SRO (READ-ONLY FORM & HIDE BUTTONS)
+   ========================================= */
+
+/* 1. Sembunyikan tombol Periksa Jadwal Service (Submit) */
+body.role-sro #submit-btn {
+    display: none !important;
+}
+
+/* 2. Matikan interaksi pada form (Read-Only) */
+body.role-sro #service-form {
+    pointer-events: none !important; /* Mencegah form diklik, diketik, atau diubah */
+    opacity: 0.85; /* Sedikit meredupkan form agar terlihat bahwa form sedang dikunci */
+}
+
+/* 3. Sembunyikan tombol Plus/Minus pada Odometer & Bulan karena tidak bisa dipakai */
+body.role-sro #service-form .num-step-btn {
+    display: none !important;
+}
+
+/* 4. Rapikan padding input angka (karena tombol plus/minus dihilangkan) */
+body.role-sro #service-form input[type="number"] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* 5. Hilangkan panah dropdown pada pilihan Tipe Mobil agar terlihat seperti teks biasa */
+body.role-sro #service-form select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+}
