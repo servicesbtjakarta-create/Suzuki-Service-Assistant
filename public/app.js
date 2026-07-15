@@ -296,33 +296,40 @@ function calculateServiceSchedule(data) {
     } 
     // 2. Evaluasi Aturan Kelipatan 10.000 KM hingga 50.000 KM (Free Service 2 - 6)
     else if (odometer <= 50000 && bulan <= 30) {
+        let namaKupon = ""; // Variabel baru untuk menyimpan nama kupon
+
         if (odometer <= 10000 && bulan <= 6) {
             targetKm = 10000;
             targetBulan = 6;
+            namaKupon = "Kupon Free Service 2";
         } else if (odometer <= 20000 && Math.max(0, bulan) <= 12) {
             targetKm = 20000;
             targetBulan = 12;
+            namaKupon = "Kupon Free Service 3";
         } else if (odometer <= 30000 && bulan <= 18) {
             targetKm = 30000;
             targetBulan = 18;
+            namaKupon = "Kupon Free Service 4";
         } else if (odometer <= 40000 && bulan <= 24) {
             targetKm = 40000;
             targetBulan = 24;
+            namaKupon = "Kupon Free Service 5";
         } else {
             targetKm = 50000;
             targetBulan = 30;
+            namaKupon = "Kupon Free Service 6";
         }
 
         // Filter Keuntungan Khusus Tipe Mobil
         if (tipeMobil.includes("New Carry Pickup")) {
             statusBiayaCustomer = "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Filter Oli)";
-            cakupanPengerjaan = `Menggunakan Kupon Free Service Berkala Target ${targetKm.toLocaleString('id-ID')} KM. Anda dibebaskan dari biaya Jasa Mekanik, penggantian Oli Mesin resmi, beserta Filter Oli baru.`;
+            cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong> untuk Target ${targetKm.toLocaleString('id-ID')} KM. Anda dibebaskan dari biaya Jasa Mekanik, penggantian Oli Mesin resmi, beserta Filter Oli baru.`;
         } else if (tipeMobil.includes("All New Ertiga") || tipeMobil.includes("XL7")) {
             statusBiayaCustomer = "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Seluruh Suku Cadang Berkala)";
-            cakupanPengerjaan = `Menggunakan Kupon Free Service Berkala Target ${targetKm.toLocaleString('id-ID')} KM. Khusus tipe mobil Anda, Anda mendapatkan gratis biaya Jasa Mekanik, Oli Mesin, dan seluruh Suku Cadang (Part) berkala resmi sesuai ketentuan kupon.`;
+            cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong> untuk Target ${targetKm.toLocaleString('id-ID')} KM. Khusus tipe mobil Anda, Anda mendapatkan gratis biaya Jasa Mekanik, Oli Mesin, dan seluruh Suku Cadang (Part) berkala resmi sesuai ketentuan kupon.`;
         } else {
             statusBiayaCustomer = "🟡 GRATIS BIAYA JASA SAJA (Oli & Part Berbayar)";
-            cakupanPengerjaan = `Menggunakan Kupon Free Service Berkala Target ${targetKm.toLocaleString('id-ID')} KM. Fasilitas yang gratis hanya Jasa Servis berkala saja. Untuk biaya Oli Mesin dan penggantian suku cadang lainnya ditanggung oleh pemilik kendaraan.`;
+            cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong> untuk Target ${targetKm.toLocaleString('id-ID')} KM. Fasilitas yang gratis hanya Jasa Servis berkala saja. Untuk biaya Oli Mesin dan penggantian suku cadang lainnya ditanggung oleh pemilik kendaraan.`;
         }
 
         // Tips Interval berdasarkan kondisi jalan
