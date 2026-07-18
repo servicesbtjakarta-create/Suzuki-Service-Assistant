@@ -135,6 +135,44 @@
                     <hr class="divider">
 
                     <div class="input-group">
+                        <label>Transmisi Kendaraan</label>
+                        <div class="radio-options" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 0.5rem;">
+                            <label class="radio-card">
+                                <input type="radio" name="transmisi" value="Manual" checked>
+                                <div class="radio-content">
+                                    <div class="radio-circle"></div>
+                                    <div class="radio-text">
+                                        <strong>Manual (MT)</strong>
+                                        <span>Transmisi manual</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="transmisi" value="Matic">
+                                <div class="radio-content">
+                                    <div class="radio-circle"></div>
+                                    <div class="radio-text">
+                                        <strong>Otomatis (Matic / AT)</strong>
+                                        <span>Transmisi otomatis</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Kupon Free Service Masih Tersedia?</label>
+                        <div class="switch-container" style="display: flex; align-items: center; gap: 0.75rem; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-color); padding: 0.6rem 1.2rem; border-radius: var(--border-radius-sm); width: max-content;">
+                            <span class="switch-label" id="label-kupon-tidak" style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted); transition: color var(--transition-fast);">Tidak</span>
+                            <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 22px;">
+                                <input type="checkbox" id="kupon_tersedia" checked style="opacity: 0; width: 0; height: 0;">
+                                <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--text-muted); transition: .3s; border-radius: 34px;"></span>
+                            </label>
+                            <span class="switch-label" id="label-kupon-ya" style="font-size: 0.9rem; font-weight: 700; color: var(--text-title); transition: color var(--transition-fast);">Ya</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
                         <label>Kondisi Rute Berkendara Sehari-hari</label>
                         <div class="radio-options">
                             <label class="radio-card">
