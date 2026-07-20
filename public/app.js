@@ -313,30 +313,28 @@ function calculateServiceSchedule(data) {
     let intervalBulan = (kondisiJalan === "Normal") ? 6 : 3;
 
     // 2. HITUNG TARGET DINAMIS (Berdasarkan Servis Terakhir)
+    let isOnlyKmMode = false; // Tambahkan flag penanda khusus
+    
     if (odometerTerakhir === 0 && bulanTerakhir === 0) {
         // KONDISI KHUSUS: Jika Usia Mobil, Odometer Servis Terakhir, dan Bulan Servis Terakhir semuanya 0
         if (bulan === 0) {
-            // Maka hasil perhitungan hanya fokus menampilkan KM saja
+            isOnlyKmMode = true; // Kunci status mode KM saja
             targetKm = (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) ? Math.ceil(odometer / intervalKm) * intervalKm : 1000;
-            targetBulan = 0; // Set ke 0 sebagai flag bahwa Bulan tidak perlu ditampilkan/dihitung
+            targetBulan = 0; 
         }
         // KONDISI BARU SEBELUMNYA: Jika odometer > 50.000 KM dan kupon Free Service TIDAK tersedia
         else if (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) {
-            // Jangan ditargetkan ke 1.000 KM, melainkan langsung ke kelipatan interval reguler berikutnya
             targetKm = Math.ceil(odometer / intervalKm) * intervalKm;
             targetBulan = Math.ceil(bulan / intervalBulan) * intervalBulan;
             if (targetBulan === 0) targetBulan = intervalBulan;
         } else {
-            // Jika kondisi di atas tidak terpenuhi, target PERTAMA tetap mutlak 1.000 KM
             targetKm = 1000;
             targetBulan = 1;
         }
     } else {
-        // Target dihitung progresif dari jejak servis terakhir
         targetKm = odometerTerakhir + intervalKm;
         targetBulan = bulanTerakhir + intervalBulan;
         
-        // Khusus transisi dari Free Service 1 (≤ 2.000 KM) ke Free Service 2 / Paket A
         if (odometerTerakhir > 0 && odometerTerakhir <= 2000) {
             targetKm = intervalKm;
             targetBulan = (kondisiJalan === "Normal") ? 6 : 3;
@@ -348,37 +346,39 @@ function calculateServiceSchedule(data) {
     let isHangus = false;
     let useFreeService = true;
 
-    // Cek apakah kupon dinonaktifkan secara manual
     if (kuponTersedia === false || kuponTersedia === "Tidak") {
         useFreeService = false;
     }
 
-    // Khusus masa free service, jika pemakaian berat, target di kelipatan 5.000 KM (yang bukan kelipatan 10.000 KM dan bukan 1.000 KM) menggunakan Paket A reguler
     if (useFreeService && kondisiJalan === "Padat" && targetKm <= 50000 && (targetKm % 10000 === 5000 || targetKm === 6000)) {
         useFreeService = false;
     }
 
     if (useFreeService) {
-        // A. Perbaikan Logika: Jika target awal masih 1.000 KM tetapi Odometer aktual SUDAH MELEBIHI batas klaim FS 1 (> 2.000 KM)
+        // Jika target masih 1.000 KM tetapi Odometer aktual SUDAH MELEBIHI batas klaim FS 1 (> 2.000 KM)
         if (targetKuponKm === 1000 && odometer > 2000) {
             isHangus = true;
-            // UPDATE LOGIKA: Ubah targetKm asli agar sinkron dengan UI (Tidak menampilkan 1.000 KM lagi)
             targetKm = 10000; 
-            targetKuponKm = 10000; // Langsung lompat ke kupon Free Service 2 (10.000 KM)
+            targetKuponKm = 10000; 
             
-            // Sesuaikan juga target bulan ke interval reguler pertama jika sebelumnya masih bulan ke-1 atau 0
-            if (targetBulan <= 1) {
+            // PERBAIKAN: Hanya set targetBulan jika BUKAN dalam mode KM saja
+            if (!isOnlyKmMode && targetBulan <= 1) {
                 targetBulan = (kondisiJalan === "Normal") ? 6 : 3;
             }
         }
 
-        // B. Looping toleransi untuk kupon FS 2 s/d FS 6 (Kelipatan 10.000 KM)
-        // Jika Odometer aktual - Target Kupon > 1000 KM, kupon hangus, geser ke kupon berikutnya
+        // Looping toleransi untuk kupon FS 2 s/d FS 6 (Kelipatan 10.000 KM)
         while (odometer - targetKuponKm > 1000 && targetKuponKm <= 50000) {
             isHangus = true;
             targetKuponKm += 10000;
-            targetKm = targetKuponKm; // Pastikan targetKm ikut bergeser maju bersama kuponnya
+            targetKm = targetKuponKm; 
         }
+    }
+
+    // PERBAIKAN AKHIR: Pastikan targetBulan dipaksa tetap 0 jika mode KM saja aktif sebelum masuk kalkulasi selisih
+    if (isOnlyKmMode) {
+        targetBulan = 0;
+    }
     }
 
     // 4. PENENTUAN STATUS BIAYA & BENEFIT KUPON BERDASARKAN KUPON YANG TERSEDIA
