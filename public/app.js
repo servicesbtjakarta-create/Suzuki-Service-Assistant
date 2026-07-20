@@ -313,21 +313,29 @@ function calculateServiceSchedule(data) {
     let intervalBulan = (kondisiJalan === "Normal") ? 6 : 3;
 
     // 2. HITUNG TARGET DINAMIS (Berdasarkan Servis Terakhir)
-    if (odometerTerakhir === 0 && bulanTerakhir === 0) {
-        // Jika belum pernah direkam servis sama sekali, target PERTAMA mutlak 1.000 KM
+if (odometerTerakhir === 0 && bulanTerakhir === 0) {
+    // KONDISI BARU: Jika odometer > 50.000 KM dan kupon Free Service TIDAK tersedia
+    if (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) {
+        // Jangan ditargetkan ke 1.000 KM, melainkan langsung ke kelipatan interval reguler berikutnya
+        targetKm = Math.ceil(odometer / intervalKm) * intervalKm;
+        targetBulan = Math.ceil(bulan / intervalBulan) * intervalBulan;
+        if (targetBulan === 0) targetBulan = intervalBulan;
+    } else {
+        // Jika kondisi di atas tidak terpenuhi, target PERTAMA tetap mutlak 1.000 KM
         targetKm = 1000;
         targetBulan = 1;
-    } else {
-        // Target dihitung progresif dari jejak servis terakhir
-        targetKm = odometerTerakhir + intervalKm;
-        targetBulan = bulanTerakhir + intervalBulan;
-
-        // Khusus transisi dari Free Service 1 (≤ 2.000 KM) ke Free Service 2 / Paket A
-        if (odometerTerakhir > 0 && odometerTerakhir <= 2000) {
-            targetKm = intervalKm;
-            targetBulan = (kondisiJalan === "Normal") ? 6 : 3;
-        }
     }
+} else {
+    // Target dihitung progresif dari jejak servis terakhir
+    targetKm = odometerTerakhir + intervalKm;
+    targetBulan = bulanTerakhir + intervalBulan;
+    
+    // Khusus transisi dari Free Service 1 (≤ 2.000 KM) ke Free Service 2 / Paket A
+    if (odometerTerakhir > 0 && odometerTerakhir <= 2000) {
+        targetKm = intervalKm;
+        targetBulan = (kondisiJalan === "Normal") ? 6 : 3;
+    }
+}
 
     // 3. EVALUASI TOLERANSI KUPON & KUPON HANGUS
     let targetKuponKm = targetKm;
