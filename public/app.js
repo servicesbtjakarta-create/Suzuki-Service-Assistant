@@ -379,7 +379,7 @@ function calculateServiceSchedule(data) {
     if (isOnlyKmMode) {
         targetBulan = 0;
     }
-    }
+    
 
     // 4. PENENTUAN STATUS BIAYA & BENEFIT KUPON BERDASARKAN KUPON YANG TERSEDIA
     if (useFreeService && targetKuponKm <= 1000) {
