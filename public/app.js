@@ -661,13 +661,23 @@ function updateResultsUI(res) {
     document.getElementById("res-nopol").innerText = res.nopol;
     document.getElementById("res-odometer").innerText = res.odometer.toLocaleString('id-ID');
 
-    document.getElementById("target-header-badge").innerText = `Target: ${res.targetKm.toLocaleString('id-ID')} KM / Bln ${res.targetBulan}`;
+    // KONDISI KHUSUS: Sesuaikan header badge jika targetBulan === 0
+    if (res.targetBulan === 0) {
+        document.getElementById("target-header-badge").innerText = `Target: ${res.targetKm.toLocaleString('id-ID')} KM`;
+    } else {
+        document.getElementById("target-header-badge").innerText = `Target: ${res.targetKm.toLocaleString('id-ID')} KM / Bln ${res.targetBulan}`;
+    }
+
+    // KONDISI KHUSUS: Sesuaikan teks detail di target summary card
+    const targetDetailText = res.targetBulan === 0 
+        ? `(Target Servis: ${res.targetKm.toLocaleString('id-ID')} KM)`
+        : `(Target Servis: ${res.targetKm.toLocaleString('id-ID')} KM atau Bulan ke-${res.targetBulan})`;
 
     // Target summary text card
     document.getElementById("target-summary-text").innerHTML = `
         <strong style="font-size: 1.05rem; display: block; margin-bottom: 4px;">${res.statusServis}</strong>
         ${res.alasanServis}<br>
-        <span style="font-size: 0.85rem; color: #666; margin-top: 6px; display: inline-block;">(Target Servis: ${res.targetKm.toLocaleString('id-ID')} KM atau Bulan ke-${res.targetBulan})</span>
+        <span style="font-size: 0.85rem; color: #666; margin-top: 6px; display: inline-block;">${targetDetailText}</span>
     `;
 
     // Visual counts for KM
@@ -702,27 +712,36 @@ function updateResultsUI(res) {
     // Reset gauge card classes
     timeCardEl.className = "gauge-card";
 
-    if (res.sisaBulan >= 0) {
-        timeValueEl.innerText = `${res.sisaBulan} Bulan`;
-        timeStatusEl.innerText = "Aman";
-
-        if (res.sisaBulan <= 1) {
-            timeCardEl.classList.add("status-alert");
-            timeStatusEl.innerText = "Mendekati Batas";
-        } else {
-            timeCardEl.classList.add("status-safe");
-        }
+    // KONDISI KHUSUS: Sembunyikan atau tampilkan kartu indikator bulan berdasarkan nilai targetBulan
+    if (res.targetBulan === 0) {
+        timeCardEl.style.display = "none";
     } else {
-        timeValueEl.innerText = `${Math.abs(res.sisaBulan)} Bulan`;
-        timeStatusEl.innerText = "Terlewat!";
-        timeCardEl.classList.add("status-danger");
+        timeCardEl.style.display = "block";
+
+        if (res.sisaBulan >= 0) {
+            timeValueEl.innerText = `${res.sisaBulan} Bulan`;
+            timeStatusEl.innerText = "Aman";
+
+            if (res.sisaBulan <= 1) {
+                timeCardEl.classList.add("status-alert");
+                timeStatusEl.innerText = "Mendekati Batas";
+            } else {
+                timeCardEl.classList.add("status-safe");
+            }
+        } else {
+            timeValueEl.innerText = `${Math.abs(res.sisaBulan)} Bulan`;
+            timeStatusEl.innerText = "Terlewat!";
+            timeCardEl.classList.add("status-danger");
+        }
     }
 
-    // Meredupkan kartu indikator jika yang lainnya sudah terlewat atau bernilai 0 (Whichever comes first)
-    if (res.sisaKm <= 0 && res.sisaBulan > 0) {
-        timeCardEl.classList.add("status-dimmed");
-    } else if (res.sisaBulan <= 0 && res.sisaKm > 0) {
-        kmCardEl.classList.add("status-dimmed");
+    // Meredupkan kartu indikator jika yang lainnya sudah terlewat atau bernilai 0 (Hanya berlaku jika targetBulan aktif)
+    if (res.targetBulan !== 0) {
+        if (res.sisaKm <= 0 && res.sisaBulan > 0) {
+            timeCardEl.classList.add("status-dimmed");
+        } else if (res.sisaBulan <= 0 && res.sisaKm > 0) {
+            kmCardEl.classList.add("status-dimmed");
+        }
     }
 
     // Cost status card content & styling
@@ -735,8 +754,9 @@ function updateResultsUI(res) {
     // SRO recommendation card
     document.getElementById("res-sro-text").innerHTML = res.rekomendasiSro;
 
-    // Trigger sound alerts (terlewat/tercapai vs aman)
-    if (res.sisaKm <= 0 || res.sisaBulan <= 0) {
+    // Trigger sound alerts (Jika targetBulan === 0, abaikan pengecekan sisaBulan)
+    const isWarning = res.targetBulan === 0 ? (res.sisaKm <= 0) : (res.sisaKm <= 0 || res.sisaBulan <= 0);
+    if (isWarning) {
         playWarningSound();
     } else {
         playSafeSound();
@@ -756,7 +776,8 @@ function updateResultsUI(res) {
     if (!kmCardEl.classList.contains("status-dimmed")) {
         kmCardEl.classList.add("blink-effect");
     }
-    if (!timeCardEl.classList.contains("status-dimmed")) {
+    // Hanya blink kartu waktu jika kartunya ditampilkan
+    if (res.targetBulan !== 0 && !timeCardEl.classList.contains("status-dimmed")) {
         timeCardEl.classList.add("blink-effect");
     }
     if (summaryCardEl) {
