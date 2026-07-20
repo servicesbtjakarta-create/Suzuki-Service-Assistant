@@ -314,8 +314,17 @@ function calculateServiceSchedule(data) {
 
     // 2. HITUNG TARGET DINAMIS (Berdasarkan Servis Terakhir)
 if (odometerTerakhir === 0 && bulanTerakhir === 0) {
-    // KONDISI BARU: Jika odometer > 50.000 KM dan kupon Free Service TIDAK tersedia
-    if (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) {
+    // KONDISI KHUSUS: Jika Usia Mobil, Odometer Servis Terakhir, dan Bulan Servis Terakhir semuanya 0
+    if (bulan === 0) {
+        // Maka hasil perhitungan hanya fokus menampilkan KM saja
+        targetKm = (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) 
+            ? Math.ceil(odometer / intervalKm) * intervalKm 
+            : 1000;
+        
+        targetBulan = 0; // Set ke 0 sebagai flag bahwa Bulan tidak perlu ditampilkan/dihitung
+    }
+    // KONDISI BARU SEBELUMNYA: Jika odometer > 50.000 KM dan kupon Free Service TIDAK tersedia
+    else if (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) {
         // Jangan ditargetkan ke 1.000 KM, melainkan langsung ke kelipatan interval reguler berikutnya
         targetKm = Math.ceil(odometer / intervalKm) * intervalKm;
         targetBulan = Math.ceil(bulan / intervalBulan) * intervalBulan;
