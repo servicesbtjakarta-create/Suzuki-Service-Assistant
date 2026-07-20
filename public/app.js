@@ -313,38 +313,35 @@ function calculateServiceSchedule(data) {
     let intervalBulan = (kondisiJalan === "Normal") ? 6 : 3;
 
     // 2. HITUNG TARGET DINAMIS (Berdasarkan Servis Terakhir)
-if (odometerTerakhir === 0 && bulanTerakhir === 0) {
-    // KONDISI KHUSUS: Jika Usia Mobil, Odometer Servis Terakhir, dan Bulan Servis Terakhir semuanya 0
-    if (bulan === 0) {
-        // Maka hasil perhitungan hanya fokus menampilkan KM saja
-        targetKm = (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) 
-            ? Math.ceil(odometer / intervalKm) * intervalKm 
-            : 1000;
-        
-        targetBulan = 0; // Set ke 0 sebagai flag bahwa Bulan tidak perlu ditampilkan/dihitung
-    }
-    // KONDISI BARU SEBELUMNYA: Jika odometer > 50.000 KM dan kupon Free Service TIDAK tersedia
-    else if (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) {
-        // Jangan ditargetkan ke 1.000 KM, melainkan langsung ke kelipatan interval reguler berikutnya
-        targetKm = Math.ceil(odometer / intervalKm) * intervalKm;
-        targetBulan = Math.ceil(bulan / intervalBulan) * intervalBulan;
-        if (targetBulan === 0) targetBulan = intervalBulan;
+    if (odometerTerakhir === 0 && bulanTerakhir === 0) {
+        // KONDISI KHUSUS: Jika Usia Mobil, Odometer Servis Terakhir, dan Bulan Servis Terakhir semuanya 0
+        if (bulan === 0) {
+            // Maka hasil perhitungan hanya fokus menampilkan KM saja
+            targetKm = (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) ? Math.ceil(odometer / intervalKm) * intervalKm : 1000;
+            targetBulan = 0; // Set ke 0 sebagai flag bahwa Bulan tidak perlu ditampilkan/dihitung
+        }
+        // KONDISI BARU SEBELUMNYA: Jika odometer > 50.000 KM dan kupon Free Service TIDAK tersedia
+        else if (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) {
+            // Jangan ditargetkan ke 1.000 KM, melainkan langsung ke kelipatan interval reguler berikutnya
+            targetKm = Math.ceil(odometer / intervalKm) * intervalKm;
+            targetBulan = Math.ceil(bulan / intervalBulan) * intervalBulan;
+            if (targetBulan === 0) targetBulan = intervalBulan;
+        } else {
+            // Jika kondisi di atas tidak terpenuhi, target PERTAMA tetap mutlak 1.000 KM
+            targetKm = 1000;
+            targetBulan = 1;
+        }
     } else {
-        // Jika kondisi di atas tidak terpenuhi, target PERTAMA tetap mutlak 1.000 KM
-        targetKm = 1000;
-        targetBulan = 1;
+        // Target dihitung progresif dari jejak servis terakhir
+        targetKm = odometerTerakhir + intervalKm;
+        targetBulan = bulanTerakhir + intervalBulan;
+        
+        // Khusus transisi dari Free Service 1 (≤ 2.000 KM) ke Free Service 2 / Paket A
+        if (odometerTerakhir > 0 && odometerTerakhir <= 2000) {
+            targetKm = intervalKm;
+            targetBulan = (kondisiJalan === "Normal") ? 6 : 3;
+        }
     }
-} else {
-    // Target dihitung progresif dari jejak servis terakhir
-    targetKm = odometerTerakhir + intervalKm;
-    targetBulan = bulanTerakhir + intervalBulan;
-    
-    // Khusus transisi dari Free Service 1 (≤ 2.000 KM) ke Free Service 2 / Paket A
-    if (odometerTerakhir > 0 && odometerTerakhir <= 2000) {
-        targetKm = intervalKm;
-        targetBulan = (kondisiJalan === "Normal") ? 6 : 3;
-    }
-}
 
     // 3. EVALUASI TOLERANSI KUPON & KUPON HANGUS
     let targetKuponKm = targetKm;
@@ -362,10 +359,17 @@ if (odometerTerakhir === 0 && bulanTerakhir === 0) {
     }
 
     if (useFreeService) {
-        // A. Toleransi khusus Free Service 1 (Target 1.000 KM, batas maksimal klaim 2.000 KM)
+        // A. Perbaikan Logika: Jika target awal masih 1.000 KM tetapi Odometer aktual SUDAH MELEBIHI batas klaim FS 1 (> 2.000 KM)
         if (targetKuponKm === 1000 && odometer > 2000) {
             isHangus = true;
-            targetKuponKm = 10000; // Lompat ke FS 2
+            // UPDATE LOGIKA: Ubah targetKm asli agar sinkron dengan UI (Tidak menampilkan 1.000 KM lagi)
+            targetKm = 10000; 
+            targetKuponKm = 10000; // Langsung lompat ke kupon Free Service 2 (10.000 KM)
+            
+            // Sesuaikan juga target bulan ke interval reguler pertama jika sebelumnya masih bulan ke-1 atau 0
+            if (targetBulan <= 1) {
+                targetBulan = (kondisiJalan === "Normal") ? 6 : 3;
+            }
         }
 
         // B. Looping toleransi untuk kupon FS 2 s/d FS 6 (Kelipatan 10.000 KM)
@@ -373,6 +377,7 @@ if (odometerTerakhir === 0 && bulanTerakhir === 0) {
         while (odometer - targetKuponKm > 1000 && targetKuponKm <= 50000) {
             isHangus = true;
             targetKuponKm += 10000;
+            targetKm = targetKuponKm; // Pastikan targetKm ikut bergeser maju bersama kuponnya
         }
     }
 
