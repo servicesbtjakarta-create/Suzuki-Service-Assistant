@@ -313,25 +313,28 @@ function calculateServiceSchedule(data) {
     let intervalBulan = (kondisiJalan === "Normal") ? 6 : 3;
 
     // 2. HITUNG TARGET DINAMIS (Berdasarkan Servis Terakhir)
-    let isOnlyKmMode = false; // Tambahkan flag penanda khusus
+    let isOnlyKmMode = false; // Penanda khusus jika input Usia Mobil & Histori Servis = 0
     
     if (odometerTerakhir === 0 && bulanTerakhir === 0) {
         // KONDISI KHUSUS: Jika Usia Mobil, Odometer Servis Terakhir, dan Bulan Servis Terakhir semuanya 0
         if (bulan === 0) {
             isOnlyKmMode = true; // Kunci status mode KM saja
-            targetKm = (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) ? Math.ceil(odometer / intervalKm) * intervalKm : 1000;
+            // Langsung arahkan ke kelipatan terdekat jika sudah lewat 50k KM, jika belum set default ke 1.000 KM pertama
+            targetKm = (odometer > 50000) ? Math.ceil(odometer / intervalKm) * intervalKm : 1000;
             targetBulan = 0; 
         }
-        // KONDISI BARU SEBELUMNYA: Jika odometer > 50.000 KM dan kupon Free Service TIDAK tersedia
+        // KONDISI JIKA ODOMETER TINGGI (>50.000 KM) & KUPON TIDAK TERSEDIA (Normal Flow dengan bulan)
         else if (odometer > 50000 && (kuponTersedia === false || kuponTersedia === "Tidak")) {
             targetKm = Math.ceil(odometer / intervalKm) * intervalKm;
             targetBulan = Math.ceil(bulan / intervalBulan) * intervalBulan;
             if (targetBulan === 0) targetBulan = intervalBulan;
         } else {
+            // Default unit baru normal
             targetKm = 1000;
             targetBulan = 1;
         }
     } else {
+        // Target dihitung progresif dari jejak servis terakhir
         targetKm = odometerTerakhir + intervalKm;
         targetBulan = bulanTerakhir + intervalBulan;
         
@@ -348,6 +351,15 @@ function calculateServiceSchedule(data) {
 
     if (kuponTersedia === false || kuponTersedia === "Tidak") {
         useFreeService = false;
+        
+        // TAMBAHAN: Jika kupon tidak tersedia sejak awal tapi targetKm masih membaca 1.000 KM (padahal odometer sudah berjalan jauh)
+        if (targetKm === 1000 && odometer > 2000) {
+            targetKm = Math.ceil(odometer / intervalKm) * intervalKm;
+            if (!isOnlyKmMode && targetBulan <= 1) {
+                targetBulan = Math.ceil(bulan / intervalBulan) * intervalBulan;
+                if (targetBulan === 0) targetBulan = intervalBulan;
+            }
+        }
     }
 
     if (useFreeService && kondisiJalan === "Padat" && targetKm <= 50000 && (targetKm % 10000 === 5000 || targetKm === 6000)) {
@@ -355,13 +367,15 @@ function calculateServiceSchedule(data) {
     }
 
     if (useFreeService) {
-        // Jika target masih 1.000 KM tetapi Odometer aktual SUDAH MELEBIHI batas klaim FS 1 (> 2.000 KM)
+        // Jika kupon masih ada tapi odometer aktual sudah melewati batas klaim FS 1 (> 2.000 KM)
         if (targetKuponKm === 1000 && odometer > 2000) {
             isHangus = true;
-            targetKm = 10000; 
-            targetKuponKm = 10000; 
             
-            // PERBAIKAN: Hanya set targetBulan jika BUKAN dalam mode KM saja
+            // Arahkan langsung ke kelipatan interval terdekat dari odometer saat ini
+            targetKm = Math.ceil(odometer / intervalKm) * intervalKm;
+            targetKuponKm = targetKm; 
+            
+            // Hanya set targetBulan jika BUKAN dalam mode KM saja
             if (!isOnlyKmMode && targetBulan <= 1) {
                 targetBulan = (kondisiJalan === "Normal") ? 6 : 3;
             }
