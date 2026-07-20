@@ -673,7 +673,7 @@ function updateResultsUI(res) {
         document.getElementById("target-header-badge").innerText = `Target: ${res.targetKm.toLocaleString('id-ID')} KM / Bln ${res.targetBulan}`;
     }
 
-    // KONDISI KHUSUS: Sesuaikan teks detail di target summary card
+    // KONDISI KHUSUS: Sesuaikan teks detail di target summary card (Sembunyikan teks bulan jika 0)
     const targetDetailText = res.targetBulan === 0 
         ? `(Target Servis: ${res.targetKm.toLocaleString('id-ID')} KM)`
         : `(Target Servis: ${res.targetKm.toLocaleString('id-ID')} KM atau Bulan ke-${res.targetBulan})`;
@@ -717,7 +717,7 @@ function updateResultsUI(res) {
     // Reset gauge card classes
     timeCardEl.className = "gauge-card";
 
-    // KONDISI KHUSUS: Sembunyikan atau tampilkan kartu indikator bulan berdasarkan nilai targetBulan
+    // KONDISI KHUSUS: Sembunyikan total kartu Sisa Batas Waktu jika targetBulan === 0
     if (res.targetBulan === 0) {
         timeCardEl.style.display = "none";
     } else {
@@ -740,7 +740,7 @@ function updateResultsUI(res) {
         }
     }
 
-    // Meredupkan kartu indikator jika yang lainnya sudah terlewat atau bernilai 0 (Hanya berlaku jika targetBulan aktif)
+    // Meredupkan kartu indikator jika yang lainnya sudah terlewat (Hanya berlaku jika targetBulan aktif)
     if (res.targetBulan !== 0) {
         if (res.sisaKm <= 0 && res.sisaBulan > 0) {
             timeCardEl.classList.add("status-dimmed");
@@ -798,7 +798,6 @@ function updateResultsUI(res) {
 // --- WHATSAPP MESSAGE REDIRECT COMPILER ---
 function handleWhatsAppShare() {
     if (!currentResults) return;
-
     const r = currentResults;
 
     // Strip HTML tag markings from status / details for text output
@@ -806,21 +805,23 @@ function handleWhatsAppShare() {
     const cleanCoverage = r.cakupanPengerjaan.replace(/<\/?[^>]+(>|$)/g, "");
     const cleanTips = r.tipsCustomer.replace(/<\/?[^>]+(>|$)/g, "");
 
+    // KONDISI KHUSUS: Tentukan baris detail target servis berdasarkan ada/tidaknya targetBulan
+    const detailTargetText = r.targetBulan === 0
+        ? `- Target KM: ${r.targetKm.toLocaleString('id-ID')} KM (Sisa: ${r.sisaKm.toLocaleString('id-ID')} KM)`
+        : `- Target KM: ${r.targetKm.toLocaleString('id-ID')} KM (Sisa: ${r.sisaKm.toLocaleString('id-ID')} KM)\n- Target Waktu: Bulan ke-${r.targetBulan} (Sisa: ${r.sisaBulan} Bulan)`;
+
     // Format Pesan WhatsApp
     const msg = `Halo Kak *${r.namaPelanggan}*,\n\n` +
         `Berikut adalah hasil analisis jadwal servis berkala mobil *${r.tipeMobil}* Anda (No. Polisi: *${r.nopol}*):\n\n` +
         `*Status Kendaraan:* ${r.statusServis}\n` +
         `*Keterangan:* ${r.alasanServis}\n\n` +
-        `📍 *Detail Target Servis:*\n` +
-        `- Target KM: ${r.targetKm.toLocaleString('id-ID')} KM (Sisa: ${r.sisaKm.toLocaleString('id-ID')} KM)\n` +
-        `- Target Waktu: Bulan ke-${r.targetBulan} (Sisa: ${r.sisaBulan} Bulan)\n\n` +
+        `📍 *Detail Target Servis:*\n${detailTargetText}\n\n` +
         `💰 *Status Biaya & Benefit:*\n${cleanCostStatus}\n${cleanCoverage}\n\n` +
         `💡 *Rekomendasi Perawatan:*\n${cleanTips}\n\n` +
         `Silakan tunjukkan pesan ini ke Service Advisor kami saat tiba di bengkel resmi Suzuki. Sampai jumpa!`;
 
     const encoded = encodeURIComponent(msg);
     const waUrl = `https://wa.me/${r.noHpFormatted}?text=${encoded}`;
-
     window.open(waUrl, "_blank");
 }
 
