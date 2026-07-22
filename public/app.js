@@ -438,7 +438,7 @@ function calculateServiceSchedule(data) {
         if (tipeMobil.includes("New Carry Pickup")) {
             statusBiayaCustomer = isHangus ? `🔴 MENGGUNAKAN KUPON FREE SERVICE ${kuponNumber}` : "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Filter Oli)";
             cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong>. Bebas biaya Jasa, Oli, dan Filter.`;
-        } else if (tipeMobil.includes("All New Ertiga") || tipeMobil.includes("XL7")) {
+        } else if (tipeMobil.includes("All New Ertiga") || tipeMobil.includes("XL7") || tipeMobil.includes("Fronx")) {
             statusBiayaCustomer = isHangus ? `🔴 MENGGUNAKAN KUPON FREE SERVICE ${kuponNumber}` : "🔴 GRATIS TOTAL (Jasa Servis, Oli Mesin, & Seluruh Suku Cadang Berkala)";
             cakupanPengerjaan = `Menggunakan <strong>${namaKupon}</strong>. Gratis biaya Jasa, Oli, dan Suku Cadang berkala resmi.`;
         } else {
