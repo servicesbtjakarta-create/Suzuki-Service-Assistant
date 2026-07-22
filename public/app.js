@@ -567,6 +567,7 @@ async function handleFormSubmit(e) {
     const carDropdown = document.getElementById("tipe_mobil");
     const odometerInput = document.getElementById("odometer");
     const bulanInput = document.getElementById("bulan");
+    const odometerTerakhirInput = document.getElementById("odometer_terakhir");
     const submitBtn = document.getElementById("submit-btn");
 
     // Reset validations
@@ -592,6 +593,11 @@ async function handleFormSubmit(e) {
     }
     if (!carDropdown.value) {
         carDropdown.closest(".input-group").classList.add("error");
+        isValid = false;
+    }
+    // TAMBAHAN VALIDASI ODOMETER TERAKHIR:
+    if (!odometerTerakhirInput.value.trim()) {
+        odometerTerakhirInput.closest(".input-group").classList.add("error");
         isValid = false;
     }
     if (!isValid) return;
